@@ -1,3 +1,7 @@
+from datetime import datetime
+from typing import Optional
+
+
 def mask_account_card(account_info):
     """
     Функция принимает строку с типом и номером карты или счета
@@ -27,3 +31,21 @@ def mask_account_card(account_info):
         masked_number = get_mask_card_number(card_number)
         # Возвращаем тип карты + маскированный номер
         return f"{card_type} {masked_number}"
+
+
+def get_date(date_string: str) -> Optional[str]:
+    """
+    Преобразует дату из формата "2024-03-11T02:26:18.671407" в формат "ДД.ММ.ГГГГ"
+
+    Args:
+        date_string (str): Строка с датой в формате ISO
+
+    Returns:
+        Optional[str]: Дата в формате "ДД.ММ.ГГГГ" или None при ошибке
+    """
+    try:
+        dt = datetime.fromisoformat(date_string)
+        return dt.strftime("%d.%m.%Y")
+    except (ValueError, TypeError) as e:
+        print(f"Ошибка при парсинге даты: {e}")
+        return None
