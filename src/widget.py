@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 
 def mask_account_card(account_info):
@@ -33,7 +32,8 @@ def mask_account_card(account_info):
         return f"{card_type} {masked_number}"
 
 
-def get_date(date_string: str) -> Optional[str]:
+
+def get_date(date_string):
     """
     Преобразует дату из формата "2024-03-11T02:26:18.671407" в формат "ДД.ММ.ГГГГ"
 
@@ -41,11 +41,10 @@ def get_date(date_string: str) -> Optional[str]:
         date_string (str): Строка с датой в формате ISO
 
     Returns:
-        Optional[str]: Дата в формате "ДД.ММ.ГГГГ" или None при ошибке
+        str: Дата в формате "ДД.ММ.ГГГГ"
     """
-    try:
-        dt = datetime.fromisoformat(date_string)
-        return dt.strftime("%d.%m.%Y")
-    except (ValueError, TypeError) as e:
-        print(f"Ошибка при парсинге даты: {e}")
-        return None
+    # Парсим строку с датой
+    dt = datetime.fromisoformat(date_string)
+
+    # Возвращаем дату в нужном формате
+    return dt.strftime("%d.%m.%Y")
