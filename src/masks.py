@@ -13,7 +13,7 @@ def get_mask_card_number(card_number):
 
 def get_mask_account(account_number):
     """Функция принимает на вход номер счета в виде числа и возвращает маску номера"""
-    # Преобразуем номер счета в строку
+
     account_str = str(account_number)
 
     # Если длина номера счета меньше 4, возвращаем его целиком
