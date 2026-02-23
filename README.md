@@ -102,13 +102,13 @@ operations = [
     }
 ]
 
-# Фильтрация успешных операций
+###### Фильтрация успешных операций
 successful_ops = filter_by_state(operations)
 
-# Сортировка по дате (сначала новые)
+###### Сортировка по дате (сначала новые)
 latest_ops = sort_by_date(successful_ops)
 
-# Отображение последних 5 операций
+###### Отображение последних 5 операций
 for op in latest_ops[:5]:
     # Маскирование карты/счета
     masked_info = mask_account_card(op['card'])
@@ -134,15 +134,15 @@ bash
 pytest tests/test_main.py -v
 ### Запуск конкретных тестов
 bash
-# Тесты для функций маскировки
+####### Тесты для функций маскировки
 pytest tests/test_main.py::test_get_mask_card_number
 pytest tests/test_main.py::test_get_mask_account
 pytest tests/test_main.py::test_mask_account_card
 
-# Тесты для функции работы с датами
+####### Тесты для функции работы с датами
 pytest tests/test_main.py::test_get_date
 
-# Тесты для функций обработки операций
+####### Тесты для функций обработки операций
 pytest tests/test_main.py::test_filter_by_state
 pytest tests/test_main.py::test_sort_by_date
 
