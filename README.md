@@ -37,6 +37,7 @@ mask_account_card(card_info: str) -> str
 
 "Счет 12345678901234567890" → "Счет **7890"
 
+
 ### 📅 Работа с датами
 get_date(date_str: str) -> str
 Преобразует дату из ISO формата в удобный для чтения формат.
@@ -46,6 +47,7 @@ get_date(date_str: str) -> str
 Выход: дата в формате ДД.ММ.ГГГГ
 
 Пример: "2024-03-15T10:30:45.123456" → "15.03.2024"
+
 
 ### 📊 Обработка операций
 filter_by_state(operations: list, state: str = 'EXECUTED') -> list
@@ -66,6 +68,7 @@ sort_by_date(operations: list, reverse: bool = True) -> list
 
 Пример: сортировка от новых к старым (по умолчанию)
 
+
 ### Установка и запуск
 #### 1. Клонирование репозитория
 bash
@@ -77,6 +80,7 @@ pip install -r requirements.txt
 #### 3. Запуск тестов
 bash
 pytest tests/test_main.py -v
+
 ### Пример использования
 python
 from src.widget import mask_account_card, get_date
@@ -126,12 +130,14 @@ text
 14.03.2024 Счет **7890
 Сумма: 5000.00 USD
 
+
 ## Тестирование
 Проект содержит полный набор тестов в директории tests/test_main.py:
 
 ### Запуск всех тестов
 bash
 pytest tests/test_main.py -v
+
 ### Запуск конкретных тестов
 bash
 ####### Тесты для функций маскировки
@@ -145,6 +151,7 @@ pytest tests/test_main.py::test_get_date
 ####### Тесты для функций обработки операций
 pytest tests/test_main.py::test_filter_by_state
 pytest tests/test_main.py::test_sort_by_date
+
 
 ## Покрытие тестами
 ✅ Маскирование номеров карт
@@ -161,6 +168,7 @@ pytest tests/test_main.py::test_sort_by_date
 
 ✅ Граничные случаи и исключения
 
+
 ## Безопасность
 ### Принципы маскировки
 Номера карт: показываются первые 6 и последние 4 цифры
@@ -176,6 +184,7 @@ pytest tests/test_main.py::test_sort_by_date
 
 Регулярно обновляйте зависимости для безопасности
 
+
 ## Разработка
 ### Внесение изменений
 Создайте ветку для новой функциональности
@@ -185,6 +194,7 @@ pytest tests/test_main.py::test_sort_by_date
 Запустите все тесты: pytest tests/ -v
 
 Создайте pull request
+
 
 ### Code style
 Следуйте PEP 8
