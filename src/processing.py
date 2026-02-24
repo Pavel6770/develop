@@ -18,7 +18,6 @@ def filter_by_state(
     filtered_operations = [
         operation for operation in operations if operation.get("state") == state
     ]
-
     return filtered_operations
 
 
@@ -36,8 +35,8 @@ def sort_by_date(
     Returns:
         Отсортированный список словарей
     """
-    # Преобразуем строку с датой в объект datetime для корректной сортировки
     def get_date(operation: Dict[str, Any]) -> datetime:
+        """Извлекает дату из операции и преобразует в datetime."""
         return datetime.fromisoformat(operation["date"].replace("Z", "+00:00"))
 
     return sorted(operations, key=get_date, reverse=reverse)
