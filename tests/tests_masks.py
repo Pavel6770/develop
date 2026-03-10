@@ -1,17 +1,7 @@
 import pytest
+from typing import Any
 
-
-def get_mask_card_number(card_number):
-    """Функция принимает на вход номер карты в виде числа и возвращает маску номера"""
-    # Преобразуем число в строку
-    card_number_str = str(card_number)
-
-    # Проверяем длину номера карты
-    if len(card_number_str) != 16:
-        return "Неверный номер карты. Должно быть 16 цифр."
-
-    # Формируем маску в формате "XXXX XX** **** XXXX"
-    return f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
+from src.masks import get_mask_card_number, get_mask_account
 
 
 class TestGetMaskCardNumber:
@@ -26,7 +16,7 @@ class TestGetMaskCardNumber:
             (1111222233334444, "1111 22** **** 4444"),
         ],
     )
-    def test_correct_masking(self, input_card, expected_output):
+    def test_correct_masking(self, input_card: Any, expected_output: str) -> None:
         """Тестирование правильности маскирования номера карты."""
         assert get_mask_card_number(input_card) == expected_output
 
@@ -39,22 +29,19 @@ class TestGetMaskCardNumber:
             (12345678901234567, "Неверный номер карты. Должно быть 16 цифр."),
             (0, "Неверный номер карты. Должно быть 16 цифр."),
             (1234567890123456, "1234 56** **** 3456"),
-
             # Номера с ведущими нулями
             ("0123456789012345", "0123 45** **** 2345"),
             ("0011223344556677", "0011 22** **** 6677"),
-
             # Номера в разных форматах (как строки)
             ("7000792289606361", "7000 79** **** 6361"),
             ("1234 5678 9012 3456", "Неверный номер карты. Должно быть 16 цифр."),
             ("1234-5678-9012-3456", "Неверный номер карты. Должно быть 16 цифр."),
-
             # Крайние случаи
             (9999999999999999, "9999 99** **** 9999"),
             (1000000000000000, "1000 00** **** 0000"),
         ],
     )
-    def test_various_formats(self, input_card, expected_output):
+    def test_various_formats(self, input_card: Any, expected_output: str) -> None:
         """Проверка работы функции на различных входных форматах."""
         assert get_mask_card_number(input_card) == expected_output
 
@@ -69,12 +56,12 @@ class TestGetMaskCardNumber:
             ({}, "Неверный номер карты. Должно быть 16 цифр."),
         ],
     )
-    def test_missing_card_number(self, input_card, expected_output):
+    def test_missing_card_number(self, input_card: Any, expected_output: str) -> None:
         """Проверка обработки отсутствия номера карты."""
         assert get_mask_card_number(input_card) == expected_output
 
     # Дополнительные тесты для граничных случаев
-    def test_edge_cases(self):
+    def test_edge_cases(self) -> None:
         """Тестирование граничных случаев."""
         # Минимальное 16-значное число
         assert get_mask_card_number(1000000000000000) == "1000 00** **** 0000"
@@ -87,24 +74,6 @@ class TestGetMaskCardNumber:
 
         # Число с ведущими нулями как строка
         assert get_mask_card_number("0000123456789012") == "0000 12** **** 9012"
-
-
-if __name__ == "__main__":
-    pytest.main(["-v", __file__])
-
-from typing import Any
-
-
-def get_mask_account(account_number: Any) -> str:
-    """Функция принимает на вход номер счета в виде числа и возвращает маску номера"""
-    account_str = str(account_number)
-
-    # Если длина номера счета меньше 4, возвращаем его целиком
-    if len(account_str) < 4:
-        return account_str
-
-    # Создаем маску в формате "**XXXX" (где XXXX - последние 4 цифры)
-    return f"**{account_str[-4:]}"
 
 
 class TestGetMaskAccount:
@@ -140,19 +109,16 @@ class TestGetMaskAccount:
             (1234567, "**4567"),  # 7 цифр
             (12345678, "**5678"),  # 8 цифр
             (12345678901234567890, "**7890"),  # 20 цифр
-
             # Номера с ведущими нулями
             ("001234", "**1234"),
             ("000123", "**0123"),
             ("000012", "**0012"),
             ("0000", "**0000"),
             ("000", "000"),
-
             # Номера в разных форматах (как строки)
             ("12345678901234567890", "**7890"),
-            ("7365 4108 4301 3587 4305", "7365 4108 4301 3587 4305"),  # Пробелы не удаляются
-            ("7365-4108-4301-3587-4305", "7365-4108-4301-3587-4305"),  # Дефисы не удаляются
-
+            ("7365 4108 4301 3587 4305", "7365 4108 4301 3587 4305"),
+            ("7365-4108-4301-3587-4305", "7365-4108-4301-3587-4305"),
             # Крайние случаи
             (9999, "**9999"),
             (1000, "**1000"),
@@ -168,20 +134,18 @@ class TestGetMaskAccount:
         "input_account,expected_output",
         [
             # Пустые и короткие значения
-            (None, "None"),  # str(None) дает "None"
+            (None, "None"),
             ("", ""),
             ("   ", "   "),
             ([1, 2, 3], "[1, 2, 3]"),
             ({}, "{}"),
             ((), "()"),
-
             # Номера меньше 4 цифр
             (123, "123"),
             (45, "45"),
             (7, "7"),
-            (-123, "-123"),  # Отрицательные числа
+            (-123, "-123"),
             (-5, "-5"),
-
             # Строки с символами
             ("abc", "abc"),
             ("a1b2c3", "a1b2c3"),
@@ -227,7 +191,9 @@ class TestGetMaskAccount:
 
         for case in test_cases:
             result = get_mask_account(case)
-            assert isinstance(result, str), f"Для входа {case} результат должен быть строкой"
+            assert isinstance(result, str), (
+                f"Для входа {case} результат должен быть строкой"
+            )
 
     def test_last_four_digits_correctness(self) -> None:
         """Проверка, что маскируются именно последние 4 цифры."""
@@ -249,3 +215,5 @@ class TestGetMaskAccount:
 
 if __name__ == "__main__":
     pytest.main(["-v", __file__])
+
+

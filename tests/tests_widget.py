@@ -1,7 +1,9 @@
 import pytest
-
-from typing import Callable, Any
+from typing import Any
 from unittest.mock import Mock
+from datetime import datetime
+
+from src.widget import mask_account_card, get_date
 
 
 # Заглушки для функций маскировки для использования в тестах
@@ -19,67 +21,6 @@ def mock_get_mask_card_number(card_number: str) -> str:
     return f"Ошибка: {card_number}"
 
 
-def mask_account_card(
-        account_info: str,
-        get_mask_account: Callable[[str], str],
-        get_mask_card_number: Callable[[str], str],
-) -> str:
-    """
-    Маскирует номер карты или счета.
-
-    Функция принимает строку с типом и номером карты или счета
-    и возвращает замаскированный номер.
-
-    Примеры:
-        mask_account_card("Visa Platinum 7000792289606361", mask_acc, mask_card)
-            -> "Visa Platinum 7000 79** **** 6361"
-        mask_account_card("Maestro 7000792289606361", mask_acc, mask_card)
-            -> "Maestro 7000 79** **** 6361"
-        mask_account_card("Счет 73654108430135874305", mask_acc, mask_card)
-            -> "Счет **4305"
-
-    Args:
-        account_info: Строка, содержащая тип и номер карты или счета
-        get_mask_account: Функция для маскировки номера счета
-        get_mask_card_number: Функция для маскировки номера карты
-
-    Returns:
-        Замаскированная строка с типом и номером
-
-    Raises:
-        IndexError: Если передана пустая строка или строка без номера
-        ValueError: Если передан неизвестный тип карты/счета
-    """
-    # Разделяем строку на части
-    parts: list[str] = account_info.split()
-
-    if not parts:
-        raise IndexError("Передана пустая строка")
-
-    # Проверяем, является ли это счетом (начинается со слова "Счет")
-    if parts[0] == "Счет":
-        if len(parts) < 2:
-            raise IndexError("Не указан номер счета")
-
-        # Для счета: первое слово - "Счет", последняя часть - номер
-        account_number: str = parts[-1]
-        # Используем существующую функцию маскировки счета
-        masked_number: str = get_mask_account(account_number)
-        # Возвращаем "Счет" + маскированный номер
-        return f"Счет {masked_number}"
-
-    # Для карты: все части, кроме последней - название карты
-    if len(parts) < 2:
-        raise IndexError("Не указан номер карты")
-
-    card_type: str = " ".join(parts[:-1])
-    card_number: str = parts[-1]
-    # Используем существующую функцию маскировки карты
-    masked_number: str = get_mask_card_number(card_number)
-    # Возвращаем тип карты + маскированный номер
-    return f"{card_type} {masked_number}"
-
-
 class TestMaskAccountCard:
     """Класс с тестами для функции маскировки номера карты или счета."""
 
@@ -91,7 +32,6 @@ class TestMaskAccountCard:
             ("Счет 73654108430135874305", "Счет **4305"),
             ("Счет 12345678901234567890", "Счет **7890"),
             ("Счет 1000200030004000", "Счет **4000"),
-
             # Карты
             ("Visa Platinum 7000792289606361", "Visa Platinum 7000 79** **** 6361"),
             ("Maestro 7000792289606361", "Maestro 7000 79** **** 6361"),
@@ -101,9 +41,9 @@ class TestMaskAccountCard:
         ],
     )
     def test_correct_type_recognition(
-            self,
-            input_info: str,
-            expected_output: str
+        self,
+        input_info: str,
+        expected_output: str
     ) -> None:
         """Тест корректного распознавания типа (карта или счет)."""
         result = mask_account_card(
@@ -124,14 +64,16 @@ class TestMaskAccountCard:
             ("МИР 1111222233334444", "МИР 1111 22** **** 4444"),
             ("UnionPay 1234123412341234", "UnionPay 1234 12** **** 1234"),
             ("JCB 4321432143214321", "JCB 4321 43** **** 4321"),
-
             # Карты с составными названиями
             ("Visa Gold 7000792289606361", "Visa Gold 7000 79** **** 6361"),
-            ("MasterCard Black Edition 1234567890123456",
-             "MasterCard Black Edition 1234 56** **** 3456"),
-            ("American Express Platinum 1111222233334444",
-             "American Express Platinum 1111 22** **** 4444"),
-
+            (
+                "MasterCard Black Edition 1234567890123456",
+                "MasterCard Black Edition 1234 56** **** 3456"
+            ),
+            (
+                "American Express Platinum 1111222233334444",
+                "American Express Platinum 1111 22** **** 4444"
+            ),
             # Различные счета
             ("Счет 12345", "Счет **2345"),
             ("Счет 123456", "Счет **3456"),
@@ -139,20 +81,18 @@ class TestMaskAccountCard:
             ("Счет 12345678", "Счет **5678"),
             ("Счет 123456789", "Счет **6789"),
             ("Счет 1234567890", "Счет **7890"),
-
             # Счета с ведущими нулями
             ("Счет 001234567890", "Счет **7890"),
             ("Счет 000012345678", "Счет **5678"),
-
             # Карты с пробелами в номере
             ("Visa 7000 7922 8960 6361", "Visa 7000 79** **** 6361"),
             ("MasterCard 1234 5678 9012 3456", "MasterCard 1234 56** **** 3456"),
         ],
     )
     def test_various_card_and_account_types(
-            self,
-            input_info: str,
-            expected_output: str
+        self,
+        input_info: str,
+        expected_output: str
     ) -> None:
         """Параметризованные тесты с разными типами карт и счетов."""
         result = mask_account_card(
@@ -169,26 +109,23 @@ class TestMaskAccountCard:
             # Пустые строки
             ("", IndexError, "Передана пустая строка"),
             ("   ", IndexError, "Передана пустая строка"),
-
             # Строки без номера
             ("Счет", IndexError, "Не указан номер счета"),
             ("Visa", IndexError, "Не указан номер карты"),
             ("MasterCard Platinum", IndexError, "Не указан номер карты"),
-
             # Неполные данные
             ("Счет ", IndexError, "Не указан номер счета"),
             ("Visa ", IndexError, "Не указан номер карты"),
-
             # Строки с некорректными разделителями
             ("Счет-73654108430135874305", IndexError, "Не указан номер счета"),
             ("Visa-Platinum-7000792289606361", IndexError, "Не указан номер карты"),
         ],
     )
     def test_invalid_input_handling(
-            self,
-            input_info: str,
-            expected_exception: Any,
-            expected_message: str
+        self,
+        input_info: str,
+        expected_exception: Any,
+        expected_message: str
     ) -> None:
         """Тестирование обработки некорректных входных данных."""
         with pytest.raises(expected_exception, match=expected_message):
@@ -242,10 +179,10 @@ class TestMaskAccountCard:
         ],
     )
     def test_number_format_preservation(
-            self,
-            input_info: str,
-            expected_card_call: str | None,
-            expected_account_call: str | None
+        self,
+        input_info: str,
+        expected_card_call: str | None,
+        expected_account_call: str | None
     ) -> None:
         """Проверка передачи номера в исходном формате в функции маскировки."""
         mock_card = Mock(return_value="mocked_card")
@@ -263,8 +200,6 @@ class TestMaskAccountCard:
     # Тест с реальными функциями маскировки
     def test_with_real_mask_functions(self) -> None:
         """Тест с реальными функциями маскировки."""
-        from unittest.mock import MagicMock
-
         # Создаем реальные функции для теста
         def real_mask_account(num: str) -> str:
             return f"**{num[-4:]}"
@@ -288,7 +223,6 @@ class TestMaskAccountCard:
     # Тест на устойчивость к ошибкам в функциях маскировки
     def test_error_handling_from_mask_functions(self) -> None:
         """Проверка обработки ошибок из функций маскировки."""
-
         def error_mask_function(num: str) -> str:
             return f"Error: {num}"
 
@@ -307,41 +241,6 @@ class TestMaskAccountCard:
         assert result_account == "Счет Error: 1234567890"
 
 
-if __name__ == "__main__":
-    pytest.main(["-v", __file__])
-
-from datetime import datetime
-from typing import Any
-
-
-def get_date(date_string: str) -> str:
-    """
-    Преобразует дату из формата ISO в формат "ДД.ММ.ГГГГ".
-
-    Args:
-        date_string: Строка с датой в формате ISO (например, "2024-03-11T02:26:18.671407")
-
-    Returns:
-        Дата в формате "ДД.ММ.ГГГГ"
-
-    Raises:
-        ValueError: Если переданная строка не соответствует формату ISO
-        TypeError: Если передан не строковый тип
-    """
-    # Проверка типа входных данных
-    if not isinstance(date_string, str):
-        raise TypeError(f"Ожидалась строка, получен {type(date_string).__name__}")
-
-    # Парсим строку с датой
-    try:
-        dt: datetime = datetime.fromisoformat(date_string)
-    except ValueError as exc:
-        raise ValueError(f"Строка '{date_string}' не соответствует формату ISO") from exc
-
-    # Возвращаем дату в нужном формате
-    return dt.strftime("%d.%m.%Y")
-
-
 class TestGetDate:
     """Класс с тестами для функции преобразования даты."""
 
@@ -353,13 +252,11 @@ class TestGetDate:
             ("2024-03-11T02:26:18.671407", "11.03.2024"),
             ("2023-12-31T23:59:59.999999", "31.12.2023"),
             ("2024-01-01T00:00:00.000000", "01.01.2024"),
-
             # Различные месяцы и дни
             ("2024-02-29T12:00:00.000000", "29.02.2024"),  # Високосный год
             ("2023-02-28T12:00:00.000000", "28.02.2023"),  # Невисокосный год
             ("2024-04-30T12:00:00.000000", "30.04.2024"),
             ("2024-06-01T12:00:00.000000", "01.06.2024"),
-
             # Различные годы
             ("2000-01-01T00:00:00.000000", "01.01.2000"),
             ("1999-12-31T23:59:59.999999", "31.12.1999"),
@@ -377,23 +274,18 @@ class TestGetDate:
             # ISO форматы без микросекунд
             ("2024-03-11T02:26:18", "11.03.2024"),
             ("2023-12-31T23:59:59", "31.12.2023"),
-
             # ISO форматы с часовым поясом
             ("2024-03-11T02:26:18+03:00", "11.03.2024"),
             ("2024-03-11T02:26:18-05:00", "11.03.2024"),
             ("2024-03-11T02:26:18+00:00", "11.03.2024"),
-
             # ISO форматы с Z (UTC)
             ("2024-03-11T02:26:18Z", "11.03.2024"),
-
             # Только дата в ISO формате
             ("2024-03-11", "11.03.2024"),
             ("2023-12-31", "31.12.2023"),
-
             # Граничные случаи
             ("0001-01-01T00:00:00", "01.01.0001"),
             ("9999-12-31T23:59:59", "31.12.9999"),
-
             # Разделители
             ("2024/03/11T02:26:18", "11.03.2024"),
             ("2024.03.11T02:26:18", "11.03.2024"),
@@ -410,37 +302,67 @@ class TestGetDate:
             # Пустые строки
             ("", ValueError, "Строка '' не соответствует формату ISO"),
             ("   ", ValueError, "Строка '   ' не соответствует формату ISO"),
-
             # Неполные даты
             ("2024", ValueError, "Строка '2024' не соответствует формату ISO"),
             ("2024-03", ValueError, "Строка '2024-03' не соответствует формату ISO"),
             ("2024-03-11T", ValueError, "Строка '2024-03-11T' не соответствует формату ISO"),
-
             # Неправильные разделители
-            ("2024.03.11 02:26:18", ValueError, "Строка '2024.03.11 02:26:18' не соответствует формату ISO"),
-            ("11-03-2024T02:26:18", ValueError, "Строка '11-03-2024T02:26:18' не соответствует формату ISO"),
-
+            (
+                "2024.03.11 02:26:18",
+                ValueError,
+                "Строка '2024.03.11 02:26:18' не соответствует формату ISO"
+            ),
+            (
+                "11-03-2024T02:26:18",
+                ValueError,
+                "Строка '11-03-2024T02:26:18' не соответствует формату ISO"
+            ),
             # Несуществующие даты
-            ("2024-02-30T12:00:00", ValueError, "Строка '2024-02-30T12:00:00' не соответствует формату ISO"),
-            ("2024-04-31T12:00:00", ValueError, "Строка '2024-04-31T12:00:00' не соответствует формату ISO"),
-            ("2023-02-29T12:00:00", ValueError, "Строка '2023-02-29T12:00:00' не соответствует формату ISO"),
-
+            (
+                "2024-02-30T12:00:00",
+                ValueError,
+                "Строка '2024-02-30T12:00:00' не соответствует формату ISO"
+            ),
+            (
+                "2024-04-31T12:00:00",
+                ValueError,
+                "Строка '2024-04-31T12:00:00' не соответствует формату ISO"
+            ),
+            (
+                "2023-02-29T12:00:00",
+                ValueError,
+                "Строка '2023-02-29T12:00:00' не соответствует формату ISO"
+            ),
             # Некорректные символы
             ("abc", ValueError, "Строка 'abc' не соответствует формату ISO"),
-            ("2024-03-11T02:26:18.671407abc", ValueError,
-             "Строка '2024-03-11T02:26:18.671407abc' не соответствует формату ISO"),
-
+            (
+                "2024-03-11T02:26:18.671407abc",
+                ValueError,
+                "Строка '2024-03-11T02:26:18.671407abc' не соответствует формату ISO"
+            ),
             # Неправильный формат времени
-            ("2024-03-11T25:00:00", ValueError, "Строка '2024-03-11T25:00:00' не соответствует формату ISO"),
-            ("2024-03-11T02:60:00", ValueError, "Строка '2024-03-11T02:60:00' не соответствует формату ISO"),
-            ("2024-03-11T02:26:60", ValueError, "Строка '2024-03-11T02:26:60' не соответствует формату ISO"),
+            (
+                "2024-03-11T25:00:00",
+                ValueError,
+                "Строка '2024-03-11T25:00:00' не соответствует формату ISO"
+            ),
+            (
+                "2024-03-11T02:60:00",
+                ValueError,
+                "Строка '2024-03-11T02:60:00' не соответствует формату ISO"
+            ),
+            (
+                "2024-03-11T02:26:60",
+                ValueError,
+                "Строка '2024-03-11T02:26:60' не соответствует формату ISO"
+            ),
         ],
     )
     def test_invalid_date_handling(
-            self,
-            input_date: str,
-            expected_exception: Any,
-            expected_message: str
+        self,
+        input_date: str,
+        expected_exception: Any,
+        expected_message: str
     ) -> None:
         """Проверка обработки некорректных входных данных."""
         with pytest.raises(expected_exception, match=expected_message):
@@ -460,10 +382,10 @@ class TestGetDate:
         ],
     )
     def test_non_string_input(
-            self,
-            input_date: Any,
-            expected_exception: Any,
-            expected_message: str
+        self,
+        input_date: Any,
+        expected_exception: Any,
+        expected_message: str
     ) -> None:
         """Проверка обработки нестроковых типов данных."""
         with pytest.raises(expected_exception, match=expected_message):
