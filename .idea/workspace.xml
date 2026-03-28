@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit" />
+    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,7 +55,7 @@
       <recent name="C:\Рабочий стол" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.tests_processing">
+  <component name="RunManager" selected="Python.test_processing">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -76,7 +78,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="tests_processing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test_processing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -89,7 +91,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/tests_processing.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\tests\test_processing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -100,7 +102,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.tests_processing" />
+        <item itemvalue="Python.test_processing" />
       </list>
     </recent_temporary>
   </component>
@@ -160,7 +162,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774698101424</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1774698191222</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1774698191222</updated>
+    </task>
+    <task id="LOCAL-00007" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1774698322655</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1774698322655</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
