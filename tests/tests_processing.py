@@ -5,28 +5,129 @@ from typing import List, Dict, Any
 from src.processing import filter_by_state, sort_by_date
 
 
+# Fixtures for common test data
+@pytest.fixture
+def sample_operations() -> List[Dict[str, Any]]:
+    """Fixture providing a sample list of operations with various states."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100, "date": "2024-01-01"},
+        {"id": 2, "state": "CANCELED", "amount": 200, "date": "2024-01-02"},
+        {"id": 3, "state": "EXECUTED", "amount": 300, "date": "2024-01-03"},
+        {"id": 4, "state": "PENDING", "amount": 400, "date": "2024-01-04"},
+        {"id": 5, "state": "EXECUTED", "amount": 500, "date": "2024-01-05"},
+    ]
+
+
+@pytest.fixture
+def executed_operations() -> List[Dict[str, Any]]:
+    """Fixture providing only EXECUTED operations."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100, "date": "2024-01-01"},
+        {"id": 3, "state": "EXECUTED", "amount": 300, "date": "2024-01-03"},
+        {"id": 5, "state": "EXECUTED", "amount": 500, "date": "2024-01-05"},
+    ]
+
+
+@pytest.fixture
+def canceled_operations() -> List[Dict[str, Any]]:
+    """Fixture providing CANCELED operations."""
+    return [
+        {"id": 2, "state": "CANCELED", "amount": 200, "date": "2024-01-02"},
+    ]
+
+
+@pytest.fixture
+def operations_without_state() -> List[Dict[str, Any]]:
+    """Fixture providing operations with missing or invalid state keys."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100},
+        {"id": 2, "amount": 200},  # Нет ключа 'state'
+        {"id": 3, "state": "EXECUTED", "amount": 300},
+        {"id": 4, "status": "EXECUTED", "amount": 400},  # Другой ключ
+    ]
+
+
+@pytest.fixture
+def operations_with_case_variations() -> List[Dict[str, Any]]:
+    """Fixture providing operations with different case variations in state."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100},
+        {"id": 2, "state": "executed", "amount": 200},  # Нижний регистр
+        {"id": 3, "state": "Executed", "amount": 300},  # Смешанный регистр
+    ]
+
+
+@pytest.fixture
+def operations_with_none_state() -> List[Dict[str, Any]]:
+    """Fixture providing operations with None or empty state values."""
+    return [
+        {"id": 1, "state": "EXECUTED", "amount": 100},
+        {"id": 2, "state": None, "amount": 200},
+        {"id": 3, "state": "EXECUTED", "amount": 300},
+        {"id": 4, "state": "", "amount": 400},
+    ]
+
+
+@pytest.fixture
+def date_sorted_operations() -> List[Dict[str, Any]]:
+    """Fixture providing operations with dates for sorting tests."""
+    return [
+        {'id': 1, 'date': '2023-01-01'},
+        {'id': 2, 'date': '2023-03-15'},
+        {'id': 3, 'date': '2023-02-10'},
+    ]
+
+
+@pytest.fixture
+def operations_with_various_dates() -> List[Dict[str, Any]]:
+    """Fixture providing operations with various date formats."""
+    return [
+        {'id': 1, 'date': '2023-01-01T10:30:00'},
+        {'id': 2, 'date': '2023-01-01T09:15:00'},
+        {'id': 3, 'date': '2023-01-02'},
+    ]
+
+
+@pytest.fixture
+def operations_with_additional_fields() -> List[Dict[str, Any]]:
+    """Fixture providing operations with additional fields."""
+    return [
+        {'id': 1, 'date': '2023-01-01', 'amount': 100, 'description': 'Payment 1'},
+        {'id': 2, 'date': '2023-03-15', 'amount': 200, 'description': 'Payment 2'},
+        {'id': 3, 'date': '2023-02-10', 'amount': 150, 'description': 'Payment 3'},
+    ]
+
+
+@pytest.fixture
+def operations_with_equal_dates() -> List[Dict[str, Any]]:
+    """Fixture providing operations with equal dates."""
+    return [
+        {'id': 1, 'date': '2023-01-01'},
+        {'id': 2, 'date': '2023-01-01'},
+        {'id': 3, 'date': '2023-01-01'},
+    ]
+
+
+@pytest.fixture
+def operations_from_different_years() -> List[Dict[str, Any]]:
+    """Fixture providing operations from different years."""
+    return [
+        {'id': 1, 'date': '2023-01-01'},
+        {'id': 2, 'date': '2022-12-31'},
+        {'id': 3, 'date': '2024-01-01'},
+        {'id': 4, 'date': '2021-06-15'},
+    ]
+
+
 class TestFilterByState:
     """Класс с тестами для функции фильтрации по статусу."""
 
-    # Тестирование фильтрации по статусу EXECUTED (по умолчанию)
-    def test_filter_by_default_state(self) -> None:
+    # Тестирование фильтрации по статусу EXECUTED (по умолчанию) с использованием фикстуры
+    def test_filter_by_default_state(self, sample_operations: List[Dict[str, Any]],
+                                     executed_operations: List[Dict[str, Any]]) -> None:
         """Тестирование фильтрации со статусом по умолчанию (EXECUTED)."""
-        operations: List[Dict[str, Any]] = [
-            {"id": 1, "state": "EXECUTED", "amount": 100},
-            {"id": 2, "state": "CANCELED", "amount": 200},
-            {"id": 3, "state": "EXECUTED", "amount": 300},
-            {"id": 4, "state": "PENDING", "amount": 400},
-            {"id": 5, "state": "EXECUTED", "amount": 500},
-        ]
-
-        expected: List[Dict[str, Any]] = [
-            {"id": 1, "state": "EXECUTED", "amount": 100},
-            {"id": 3, "state": "EXECUTED", "amount": 300},
-            {"id": 5, "state": "EXECUTED", "amount": 500},
-        ]
-
-        result = filter_by_state(operations)
-        assert result == expected
+        result = filter_by_state(sample_operations)
+        assert result == executed_operations
         assert len(result) == 3
 
     # Параметризованные тесты для различных значений статуса
@@ -35,64 +136,64 @@ class TestFilterByState:
         [
             # Фильтрация по статусу EXECUTED
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-                    {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
-                    {"id": 3, "state": "EXECUTED", "date": "2024-01-03"},
-                ],
-                "EXECUTED",
-                [
-                    {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-                    {"id": 3, "state": "EXECUTED", "date": "2024-01-03"},
-                ],
+                    [
+                        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
+                        {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
+                        {"id": 3, "state": "EXECUTED", "date": "2024-01-03"},
+                    ],
+                    "EXECUTED",
+                    [
+                        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
+                        {"id": 3, "state": "EXECUTED", "date": "2024-01-03"},
+                    ],
             ),
             # Фильтрация по статусу CANCELED
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-                    {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
-                    {"id": 3, "state": "CANCELED", "date": "2024-01-03"},
-                    {"id": 4, "state": "EXECUTED", "date": "2024-01-04"},
-                ],
-                "CANCELED",
-                [
-                    {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
-                    {"id": 3, "state": "CANCELED", "date": "2024-01-03"},
-                ],
+                    [
+                        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
+                        {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
+                        {"id": 3, "state": "CANCELED", "date": "2024-01-03"},
+                        {"id": 4, "state": "EXECUTED", "date": "2024-01-04"},
+                    ],
+                    "CANCELED",
+                    [
+                        {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
+                        {"id": 3, "state": "CANCELED", "date": "2024-01-03"},
+                    ],
             ),
             # Фильтрация по статусу PENDING
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-                    {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
-                    {"id": 3, "state": "PENDING", "date": "2024-01-03"},
-                ],
-                "PENDING",
-                [
-                    {"id": 3, "state": "PENDING", "date": "2024-01-03"},
-                ],
+                    [
+                        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
+                        {"id": 2, "state": "CANCELED", "date": "2024-01-02"},
+                        {"id": 3, "state": "PENDING", "date": "2024-01-03"},
+                    ],
+                    "PENDING",
+                    [
+                        {"id": 3, "state": "PENDING", "date": "2024-01-03"},
+                    ],
             ),
             # Фильтрация по нестандартному статусу
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-                    {"id": 2, "state": "PROCESSING", "date": "2024-01-02"},
-                    {"id": 3, "state": "COMPLETED", "date": "2024-01-03"},
-                    {"id": 4, "state": "PROCESSING", "date": "2024-01-04"},
-                ],
-                "PROCESSING",
-                [
-                    {"id": 2, "state": "PROCESSING", "date": "2024-01-02"},
-                    {"id": 4, "state": "PROCESSING", "date": "2024-01-04"},
-                ],
+                    [
+                        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
+                        {"id": 2, "state": "PROCESSING", "date": "2024-01-02"},
+                        {"id": 3, "state": "COMPLETED", "date": "2024-01-03"},
+                        {"id": 4, "state": "PROCESSING", "date": "2024-01-04"},
+                    ],
+                    "PROCESSING",
+                    [
+                        {"id": 2, "state": "PROCESSING", "date": "2024-01-02"},
+                        {"id": 4, "state": "PROCESSING", "date": "2024-01-04"},
+                    ],
             ),
         ],
     )
     def test_filter_by_various_states(
-        self,
-        operations: List[Dict[str, Any]],
-        state: str,
-        expected: List[Dict[str, Any]],
+            self,
+            operations: List[Dict[str, Any]],
+            state: str,
+            expected: List[Dict[str, Any]],
     ) -> None:
         """Параметризованные тесты для различных значений статуса."""
         result = filter_by_state(operations, state)
@@ -104,46 +205,46 @@ class TestFilterByState:
         [
             # Нет операций со статусом EXECUTED
             (
-                [
-                    {"id": 1, "state": "CANCELED", "amount": 100},
-                    {"id": 2, "state": "PENDING", "amount": 200},
-                    {"id": 3, "state": "CANCELED", "amount": 300},
-                ],
-                "EXECUTED",
-                [],
+                    [
+                        {"id": 1, "state": "CANCELED", "amount": 100},
+                        {"id": 2, "state": "PENDING", "amount": 200},
+                        {"id": 3, "state": "CANCELED", "amount": 300},
+                    ],
+                    "EXECUTED",
+                    [],
             ),
             # Нет операций со статусом CANCELED
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "state": "PENDING", "amount": 200},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-                "CANCELED",
-                [],
+                    [
+                        {"id": 1, "state": "EXECUTED", "amount": 100},
+                        {"id": 2, "state": "PENDING", "amount": 200},
+                        {"id": 3, "state": "EXECUTED", "amount": 300},
+                    ],
+                    "CANCELED",
+                    [],
             ),
             # Нет операций с несуществующим статусом
             (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "state": "CANCELED", "amount": 200},
-                ],
-                "APPROVED",
-                [],
+                    [
+                        {"id": 1, "state": "EXECUTED", "amount": 100},
+                        {"id": 2, "state": "CANCELED", "amount": 200},
+                    ],
+                    "APPROVED",
+                    [],
             ),
             # Пустой список операций
             (
-                [],
-                "EXECUTED",
-                [],
+                    [],
+                    "EXECUTED",
+                    [],
             ),
         ],
     )
     def test_no_matching_state(
-        self,
-        operations: List[Dict[str, Any]],
-        state: str,
-        expected: List[Dict[str, Any]],
+            self,
+            operations: List[Dict[str, Any]],
+            state: str,
+            expected: List[Dict[str, Any]],
     ) -> None:
         """Проверка работы функции при отсутствии словарей с указанным статусом."""
         result = filter_by_state(operations, state)
@@ -151,73 +252,36 @@ class TestFilterByState:
         assert isinstance(result, list)
         assert len(result) == 0
 
-    # Дополнительные тесты для граничных случаев
-    @pytest.mark.parametrize(
-        "operations,state,expected",
-        [
-            # Операции с отсутствующим ключом 'state'
-            (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "amount": 200},  # Нет ключа 'state'
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                    {"id": 4, "status": "EXECUTED", "amount": 400},  # Другой ключ
-                ],
-                "EXECUTED",
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-            ),
-            # Регистр значения status
-            (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "state": "executed", "amount": 200},  # Нижний регистр
-                    {"id": 3, "state": "Executed", "amount": 300},  # Смешанный регистр
-                ],
-                "EXECUTED",
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                ],
-            ),
-            # Значение None в статусе
-            (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "state": None, "amount": 200},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-                "EXECUTED",
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-            ),
-            # Пустая строка в статусе
-            (
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 2, "state": "", "amount": 200},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-                "EXECUTED",
-                [
-                    {"id": 1, "state": "EXECUTED", "amount": 100},
-                    {"id": 3, "state": "EXECUTED", "amount": 300},
-                ],
-            ),
-        ],
-    )
-    def test_edge_cases(
-        self,
-        operations: List[Dict[str, Any]],
-        state: str,
-        expected: List[Dict[str, Any]],
+    # Дополнительные тесты для граничных случаев с использованием фикстур
+    def test_edge_cases_with_fixtures(
+            self,
+            operations_without_state: List[Dict[str, Any]],
+            operations_with_case_variations: List[Dict[str, Any]],
+            operations_with_none_state: List[Dict[str, Any]]
     ) -> None:
-        """Тестирование граничных случаев."""
-        result = filter_by_state(operations, state)
-        assert result == expected
+        """Тестирование граничных случаев с использованием фикстур."""
+        # Тест с отсутствующим ключом 'state'
+        expected_without_state = [
+            {"id": 1, "state": "EXECUTED", "amount": 100},
+            {"id": 3, "state": "EXECUTED", "amount": 300},
+        ]
+        result_without_state = filter_by_state(operations_without_state, "EXECUTED")
+        assert result_without_state == expected_without_state
+
+        # Тест с регистром значения status
+        expected_case = [
+            {"id": 1, "state": "EXECUTED", "amount": 100},
+        ]
+        result_case = filter_by_state(operations_with_case_variations, "EXECUTED")
+        assert result_case == expected_case
+
+        # Тест со значениями None и пустой строкой в статусе
+        expected_none = [
+            {"id": 1, "state": "EXECUTED", "amount": 100},
+            {"id": 3, "state": "EXECUTED", "amount": 300},
+        ]
+        result_none = filter_by_state(operations_with_none_state, "EXECUTED")
+        assert result_none == expected_none
 
     # Тест с большим количеством операций
     def test_large_operations_list(self) -> None:
@@ -267,90 +331,60 @@ class TestFilterByState:
         assert [item["id"] for item in result] == [5, 3, 2]
 
     # Тест с использованием значения по умолчанию
-    def test_default_state_parameter(self) -> None:
+    def test_default_state_parameter(self, sample_operations: List[Dict[str, Any]]) -> None:
         """Тестирование использования значения параметра state по умолчанию."""
-        operations: List[Dict[str, Any]] = [
-            {"id": 1, "state": "EXECUTED", "amount": 100},
-            {"id": 2, "state": "CANCELED", "amount": 200},
-            {"id": 3, "state": "PENDING", "amount": 300},
-        ]
-
         # Вызов без указания state (должен использовать "EXECUTED")
-        result1 = filter_by_state(operations)
+        result1 = filter_by_state(sample_operations)
         # Явное указание "EXECUTED"
-        result2 = filter_by_state(operations, "EXECUTED")
+        result2 = filter_by_state(sample_operations, "EXECUTED")
 
         assert result1 == result2
-        assert len(result1) == 1
+        assert len(result1) == 3
         assert result1[0]["id"] == 1
 
     # Тест на неизменяемость исходного списка
-    def test_does_not_modify_original(self) -> None:
+    def test_does_not_modify_original(self, sample_operations: List[Dict[str, Any]]) -> None:
         """Тестирование, что функция не изменяет исходный список."""
-        original: List[Dict[str, Any]] = [
-            {"id": 1, "state": "EXECUTED", "amount": 100},
-            {"id": 2, "state": "CANCELED", "amount": 200},
-            {"id": 3, "state": "EXECUTED", "amount": 300},
-        ]
+        original_copy = sample_operations.copy()
 
-        original_copy = original.copy()
-
-        filter_by_state(original, "EXECUTED")
+        filter_by_state(sample_operations, "EXECUTED")
 
         # Проверяем, что исходный список не изменился
-        assert original == original_copy
+        assert sample_operations == original_copy
 
 
 class TestSortByDate:
     """Тесты для функции sort_by_date."""
 
-    def test_sort_by_date_descending_default(self) -> None:
+    def test_sort_by_date_descending_default(self, date_sorted_operations: List[Dict[str, Any]]) -> None:
         """Тест сортировки по убыванию (по умолчанию)."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01'},
-            {'id': 2, 'date': '2023-03-15'},
-            {'id': 3, 'date': '2023-02-10'},
-        ]
-
         expected = [
             {'id': 2, 'date': '2023-03-15'},
             {'id': 3, 'date': '2023-02-10'},
             {'id': 1, 'date': '2023-01-01'},
         ]
 
-        assert sort_by_date(operations) == expected
+        assert sort_by_date(date_sorted_operations) == expected
 
-    def test_sort_by_date_ascending(self) -> None:
+    def test_sort_by_date_ascending(self, date_sorted_operations: List[Dict[str, Any]]) -> None:
         """Тест сортировки по возрастанию."""
-        operations = [
-            {'id': 1, 'date': '2023-03-15'},
-            {'id': 2, 'date': '2023-01-01'},
-            {'id': 3, 'date': '2023-02-10'},
-        ]
-
         expected = [
-            {'id': 2, 'date': '2023-01-01'},
+            {'id': 1, 'date': '2023-01-01'},
             {'id': 3, 'date': '2023-02-10'},
-            {'id': 1, 'date': '2023-03-15'},
+            {'id': 2, 'date': '2023-03-15'},
         ]
 
-        assert sort_by_date(operations, reverse=False) == expected
+        assert sort_by_date(date_sorted_operations, reverse=False) == expected
 
-    def test_sort_with_different_date_formats(self) -> None:
+    def test_sort_with_different_date_formats(self, operations_with_various_dates: List[Dict[str, Any]]) -> None:
         """Тест сортировки с разными форматами дат."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01T10:30:00'},
-            {'id': 2, 'date': '2023-01-01T09:15:00'},
-            {'id': 3, 'date': '2023-01-02'},
-        ]
-
         expected_desc = [
             {'id': 3, 'date': '2023-01-02'},
             {'id': 1, 'date': '2023-01-01T10:30:00'},
             {'id': 2, 'date': '2023-01-01T09:15:00'},
         ]
 
-        assert sort_by_date(operations) == expected_desc
+        assert sort_by_date(operations_with_various_dates) == expected_desc
 
     def test_empty_list(self) -> None:
         """Тест с пустым списком."""
@@ -361,26 +395,20 @@ class TestSortByDate:
         operations = [{'id': 1, 'date': '2023-01-01'}]
         assert sort_by_date(operations) == operations
 
-    def test_elements_with_additional_fields(self) -> None:
+    def test_elements_with_additional_fields(self, operations_with_additional_fields: List[Dict[str, Any]]) -> None:
         """Тест с элементами, содержащими дополнительные поля."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01', 'amount': 100, 'description': 'Payment 1'},
-            {'id': 2, 'date': '2023-03-15', 'amount': 200, 'description': 'Payment 2'},
-            {'id': 3, 'date': '2023-02-10', 'amount': 150, 'description': 'Payment 3'},
-        ]
-
         expected = [
             {'id': 2, 'date': '2023-03-15', 'amount': 200, 'description': 'Payment 2'},
             {'id': 3, 'date': '2023-02-10', 'amount': 150, 'description': 'Payment 3'},
             {'id': 1, 'date': '2023-01-01', 'amount': 100, 'description': 'Payment 1'},
         ]
 
-        assert sort_by_date(operations) == expected
+        assert sort_by_date(operations_with_additional_fields) == expected
 
     @pytest.mark.parametrize(
         "reverse,expected_order",
         [
-            (True, [3, 2, 1]),   # По убыванию
+            (True, [3, 2, 1]),  # По убыванию
             (False, [1, 2, 3]),  # По возрастанию
         ],
     )
@@ -397,26 +425,13 @@ class TestSortByDate:
 
         assert result_ids == expected_order
 
-    def test_preserves_original_order_for_equal_dates(self) -> None:
+    def test_preserves_original_order_for_equal_dates(self, operations_with_equal_dates: List[Dict[str, Any]]) -> None:
         """Тест сохранения исходного порядка для одинаковых дат."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01'},
-            {'id': 2, 'date': '2023-01-01'},
-            {'id': 3, 'date': '2023-01-01'},
-        ]
-
         # Так как сортировка стабильная, порядок должен сохраниться
-        assert sort_by_date(operations) == operations
+        assert sort_by_date(operations_with_equal_dates) == operations_with_equal_dates
 
-    def test_dates_from_different_years(self) -> None:
+    def test_dates_from_different_years(self, operations_from_different_years: List[Dict[str, Any]]) -> None:
         """Тест сортировки дат из разных годов."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01'},
-            {'id': 2, 'date': '2022-12-31'},
-            {'id': 3, 'date': '2024-01-01'},
-            {'id': 4, 'date': '2021-06-15'},
-        ]
-
         expected_desc = [
             {'id': 3, 'date': '2024-01-01'},
             {'id': 1, 'date': '2023-01-01'},
@@ -431,8 +446,8 @@ class TestSortByDate:
             {'id': 3, 'date': '2024-01-01'},
         ]
 
-        assert sort_by_date(operations) == expected_desc
-        assert sort_by_date(operations, reverse=False) == expected_asc
+        assert sort_by_date(operations_from_different_years) == expected_desc
+        assert sort_by_date(operations_from_different_years, reverse=False) == expected_asc
 
 
 class TestSortByDateExceptions:

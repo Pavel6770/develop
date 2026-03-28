@@ -4,6 +4,98 @@ from typing import Any
 from src.masks import get_mask_card_number, get_mask_account
 
 
+# Fixtures for common test data
+@pytest.fixture
+def valid_card_numbers() -> list[tuple[Any, str]]:
+    """Fixture providing valid card numbers and their expected masked formats."""
+    return [
+        (7000792289606361, "7000 79** **** 6361"),
+        (1234567890123456, "1234 56** **** 3456"),
+        (1111222233334444, "1111 22** **** 4444"),
+        (9999999999999999, "9999 99** **** 9999"),
+        (1000000000000000, "1000 00** **** 0000"),
+    ]
+
+
+@pytest.fixture
+def invalid_card_numbers() -> list[tuple[Any, str]]:
+    """Fixture providing invalid card numbers and their expected error messages."""
+    return [
+        (123456789012345, "Неверный номер карты. Должно быть 16 цифр."),
+        (12345678901234567, "Неверный номер карты. Должно быть 16 цифр."),
+        (0, "Неверный номер карты. Должно быть 16 цифр."),
+        (None, "Неверный номер карты. Должно быть 16 цифр."),
+        ("", "Неверный номер карты. Должно быть 16 цифр."),
+        ("   ", "Неверный номер карты. Должно быть 16 цифр."),
+    ]
+
+
+@pytest.fixture
+def card_numbers_with_leading_zeros() -> list[tuple[Any, str]]:
+    """Fixture providing card numbers with leading zeros."""
+    return [
+        ("0123456789012345", "0123 45** **** 2345"),
+        ("0011223344556677", "0011 22** **** 6677"),
+        ("0000123456789012", "0000 12** **** 9012"),
+    ]
+
+
+@pytest.fixture
+def valid_account_numbers() -> list[tuple[Any, str]]:
+    """Fixture providing valid account numbers and their expected masked formats."""
+    return [
+        (73654108430135874305, "**4305"),
+        (123456789, "**6789"),
+        (1000200030004000, "**4000"),
+        (1111222233334444, "**4444"),
+        (12345, "**2345"),
+        (1234, "**1234"),
+    ]
+
+
+@pytest.fixture
+def short_account_numbers() -> list[tuple[Any, str]]:
+    """Fixture providing short account numbers (less than 4 digits)."""
+    return [
+        (123, "123"),
+        (12, "12"),
+        (1, "1"),
+        (0, "0"),
+        (-123, "-123"),
+        (-5, "-5"),
+    ]
+
+
+@pytest.fixture
+def account_numbers_with_leading_zeros() -> list[tuple[Any, str]]:
+    """Fixture providing account numbers with leading zeros."""
+    return [
+        ("001234", "**1234"),
+        ("000123", "**0123"),
+        ("000012", "**0012"),
+        ("0000", "**0000"),
+        ("000", "000"),
+        ("00001234", "**1234"),
+        ("00000000", "**0000"),
+    ]
+
+
+@pytest.fixture
+def invalid_account_inputs() -> list[tuple[Any, str]]:
+    """Fixture providing invalid inputs for account masking."""
+    return [
+        (None, "None"),
+        ("", ""),
+        ("   ", "   "),
+        ([1, 2, 3], "[1, 2, 3]"),
+        ({}, "{}"),
+        ((), "()"),
+        ("abc", "abc"),
+        ("a1b2c3", "a1b2c3"),
+        ("!@#$", "!@#$"),
+    ]
+
+
 class TestGetMaskCardNumber:
     """Класс с тестами для функции маскирования номера карты."""
 
@@ -19,6 +111,12 @@ class TestGetMaskCardNumber:
     def test_correct_masking(self, input_card: Any, expected_output: str) -> None:
         """Тестирование правильности маскирования номера карты."""
         assert get_mask_card_number(input_card) == expected_output
+
+    # Тестирование с использованием фикстуры валидных номеров
+    def test_correct_masking_with_fixture(self, valid_card_numbers: list[tuple[Any, str]]) -> None:
+        """Тестирование правильности маскирования с использованием фикстуры."""
+        for input_card, expected_output in valid_card_numbers:
+            assert get_mask_card_number(input_card) == expected_output
 
     # Проверка работы функции на различных входных форматах
     @pytest.mark.parametrize(
@@ -45,20 +143,17 @@ class TestGetMaskCardNumber:
         """Проверка работы функции на различных входных форматах."""
         assert get_mask_card_number(input_card) == expected_output
 
-    # Проверка обработки отсутствия номера карты
-    @pytest.mark.parametrize(
-        "input_card,expected_output",
-        [
-            (None, "Неверный номер карты. Должно быть 16 цифр."),
-            ("", "Неверный номер карты. Должно быть 16 цифр."),
-            ("   ", "Неверный номер карты. Должно быть 16 цифр."),
-            ([], "Неверный номер карты. Должно быть 16 цифр."),
-            ({}, "Неверный номер карты. Должно быть 16 цифр."),
-        ],
-    )
-    def test_missing_card_number(self, input_card: Any, expected_output: str) -> None:
+    # Проверка обработки отсутствия номера карты с использованием фикстуры
+    def test_missing_card_number(self, invalid_card_numbers: list[tuple[Any, str]]) -> None:
         """Проверка обработки отсутствия номера карты."""
-        assert get_mask_card_number(input_card) == expected_output
+        for input_card, expected_output in invalid_card_numbers:
+            assert get_mask_card_number(input_card) == expected_output
+
+    # Тестирование номеров с ведущими нулями с использованием фикстуры
+    def test_card_numbers_with_leading_zeros(self, card_numbers_with_leading_zeros: list[tuple[Any, str]]) -> None:
+        """Тестирование номеров карт с ведущими нулями."""
+        for input_card, expected_output in card_numbers_with_leading_zeros:
+            assert get_mask_card_number(input_card) == expected_output
 
     # Дополнительные тесты для граничных случаев
     def test_edge_cases(self) -> None:
@@ -93,6 +188,12 @@ class TestGetMaskAccount:
     def test_correct_masking(self, input_account: Any, expected_output: str) -> None:
         """Тестирование правильности маскирования номера счета."""
         assert get_mask_account(input_account) == expected_output
+
+    # Тестирование с использованием фикстуры валидных номеров счетов
+    def test_correct_masking_with_fixture(self, valid_account_numbers: list[tuple[Any, str]]) -> None:
+        """Тестирование правильности маскирования с использованием фикстуры."""
+        for input_account, expected_output in valid_account_numbers:
+            assert get_mask_account(input_account) == expected_output
 
     # Проверка работы функции с различными форматами и длинами
     @pytest.mark.parametrize(
@@ -129,32 +230,23 @@ class TestGetMaskAccount:
         """Проверка работы функции с различными форматами и длинами номеров счетов."""
         assert get_mask_account(input_account) == expected_output
 
-    # Проверка обработки коротких номеров счетов
-    @pytest.mark.parametrize(
-        "input_account,expected_output",
-        [
-            # Пустые и короткие значения
-            (None, "None"),
-            ("", ""),
-            ("   ", "   "),
-            ([1, 2, 3], "[1, 2, 3]"),
-            ({}, "{}"),
-            ((), "()"),
-            # Номера меньше 4 цифр
-            (123, "123"),
-            (45, "45"),
-            (7, "7"),
-            (-123, "-123"),
-            (-5, "-5"),
-            # Строки с символами
-            ("abc", "abc"),
-            ("a1b2c3", "a1b2c3"),
-            ("!@#$", "!@#$"),
-        ],
-    )
-    def test_short_account_numbers(self, input_account: Any, expected_output: str) -> None:
+    # Проверка обработки коротких номеров счетов с использованием фикстуры
+    def test_short_account_numbers(self, short_account_numbers: list[tuple[Any, str]]) -> None:
         """Проверка обработки коротких и нестандартных номеров счетов."""
-        assert get_mask_account(input_account) == expected_output
+        for input_account, expected_output in short_account_numbers:
+            assert get_mask_account(input_account) == expected_output
+
+    # Тестирование номеров счетов с ведущими нулями с использованием фикстуры
+    def test_account_numbers_with_leading_zeros(self, account_numbers_with_leading_zeros: list[tuple[Any, str]]) -> None:
+        """Тестирование номеров счетов с ведущими нулями."""
+        for input_account, expected_output in account_numbers_with_leading_zeros:
+            assert get_mask_account(input_account) == expected_output
+
+    # Проверка обработки невалидных входных данных с использованием фикстуры
+    def test_invalid_account_inputs(self, invalid_account_inputs: list[tuple[Any, str]]) -> None:
+        """Проверка обработки невалидных входных данных."""
+        for input_account, expected_output in invalid_account_inputs:
+            assert get_mask_account(input_account) == expected_output
 
     # Дополнительные тесты для граничных случаев
     def test_edge_cases(self) -> None:
