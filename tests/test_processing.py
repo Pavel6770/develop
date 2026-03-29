@@ -463,18 +463,41 @@ class TestSortByDateExceptions:
         with pytest.raises(KeyError):
             sort_by_date(operations)
 
-    def test_invalid_date_format(self) -> None:
-        """Тест с некорректным форматом даты."""
-        operations = [
-            {'id': 1, 'date': '2023-01-01'},
-            {'id': 2, 'date': 'invalid_date'},
-        ]
+    class TestSortByDate:
+        """Тесты для функции sort_by_date."""
 
-        # Строковое сравнение все равно будет работать, но логически это неверно
-        # В реальном проекте здесь может быть ожидаемое исключение при парсинге даты
-        result = sort_by_date(operations)
-        # Проверяем, что сортировка произошла (строковое сравнение)
-        assert result[0]['id'] == 2  # 'invalid_date' > '2023-01-01' при строковом сравнении
+        def test_invalid_date_format(self) -> None:
+            """Тест с некорректным форматом даты."""
+            operations = [
+                {'id': 1, 'date': '2023-01-01'},
+                {'id': 2, 'date': 'invalid_date'},
+            ]
+
+            with pytest.raises(ValueError, match="Некорректный формат даты"):
+                sort_by_date(operations)
+
+    class TestSortByDateExceptions:
+        """Тесты для проверки исключительных ситуаций."""
+
+        def test_missing_date_key(self) -> None:
+            """Тест на отсутствие ключа 'date'."""
+            operations = [
+                {'id': 1, 'date': '2023-01-01'},
+                {'id': 2, 'amount': 100},  # Нет ключа 'date'
+            ]
+
+            with pytest.raises(KeyError, match="Отсутствует ключ 'date'"):
+                sort_by_date(operations)
+
+        def test_none_date_value(self) -> None:
+            """Тест с значением None для даты."""
+            operations = [
+                {'id': 1, 'date': '2023-01-01'},
+                {'id': 2, 'date': None},
+            ]
+
+            with pytest.raises(KeyError, match="Отсутствует ключ 'date'"):
+                sort_by_date(operations)
 
 
 if __name__ == "__main__":

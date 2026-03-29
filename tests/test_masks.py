@@ -41,19 +41,6 @@ def card_numbers_with_leading_zeros() -> list[tuple[Any, str]]:
 
 
 @pytest.fixture
-def valid_account_numbers() -> list[tuple[Any, str]]:
-    """Fixture providing valid account numbers and their expected masked formats."""
-    return [
-        (73654108430135874305, "**4305"),
-        (123456789, "**6789"),
-        (1000200030004000, "**4000"),
-        (1111222233334444, "**4444"),
-        (12345, "**2345"),
-        (1234, "**1234"),
-    ]
-
-
-@pytest.fixture
 def short_account_numbers() -> list[tuple[Any, str]]:
     """Fixture providing short account numbers (less than 4 digits)."""
     return [
