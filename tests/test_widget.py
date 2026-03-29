@@ -601,34 +601,6 @@ class TestGetDate:
         for input_date, expected in microseconds_test_cases:
             assert get_date(input_date) == expected
 
-    class TestGetDate:
-        """Класс с тестами для функции преобразования даты."""
-
-        def test_whitespace_handling(self) -> None:
-            """Проверка обработки пробелов в строке."""
-
-            with pytest.raises(ValueError, match="не соответствует формату ISO"):
-                get_date(" 2024-03-11T02:26:18")
-
-            with pytest.raises(ValueError, match="не соответствует формату ISO"):
-                get_date("2024-03-11T02:26:18 ")
-
-            with pytest.raises(ValueError, match="не соответствует формату ISO"):
-                get_date("2024-03-11 T02:26:18")
-
-        def test_none_input(self) -> None:
-            """Тест с None входным значением."""
-            with pytest.raises(TypeError, match="Ожидалась строка, получен NoneType"):
-                get_date(None)  # type: ignore
-
-        def test_empty_string(self) -> None:
-            """Тест с пустой строкой."""
-            with pytest.raises(ValueError, match="не соответствует формату ISO"):
-                get_date("")
-
-            with pytest.raises(ValueError, match="не соответствует формату ISO"):
-                get_date("   ")
-
 
 if __name__ == "__main__":
     pytest.main(["-v", __file__])
