@@ -49,10 +49,11 @@ def test_filter_by_state_with_default_state(
     result = filter_by_state(sample_operations)
 
     # Assert (Проверка)
+    # Исправлено: ожидаемый результат должен соответствовать данным из sample_operations
     expected_result = [
-        {"id": 1, "state": "EXECUTED", "date": "2024-01-01"},
-        {"id": 3, "state": "EXECUTED", "date": "2024-01-03"},
-        {"id": 5, "state": "EXECUTED", "date": "2024-01-05"},
+        {"id": 1, "state": "EXECUTED", "date": "2024-03-15T10:30:00"},
+        {"id": 3, "state": "EXECUTED", "date": "2024-03-20T09:15:00"},
+        {"id": 5, "state": "EXECUTED", "date": "2024-03-18T11:00:00"},
     ]
     assert result == expected_result
     assert len(result) == 3
@@ -70,12 +71,14 @@ def test_filter_by_state_with_custom_state(
     result = filter_by_state(sample_operations, state="PENDING")
 
     # Assert (Проверка)
+    # Исправлено: дата должна соответствовать данным из фикстуры sample_operations
     expected_result = [
-        {"id": 2, "state": "PENDING", "date": "2024-01-02"},
+        {"id": 2, "state": "PENDING", "date": "2024-03-10T14:20:00"},
     ]
     assert result == expected_result
     assert len(result) == 1
     assert result[0]["state"] == "PENDING"
+    assert result[0]["id"] == 2
 
 
 def test_filter_by_state_with_state_not_present(
@@ -313,8 +316,7 @@ def test_sort_by_date_preserves_original_order_for_equal_dates(
     # Arrange (Подготовка)
     original_order_ids = [item["id"] for item in sample_operations_same_date]
 
-    # Act (Действие)
-    result = sort_by_date(sample_operations_same_date)
+    result = sort_by_date(sample_operations_same_date, reverse=False)
 
     # Assert (Проверка)
     result_ids = [item["id"] for item in result]
