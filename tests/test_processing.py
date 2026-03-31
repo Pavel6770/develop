@@ -189,8 +189,8 @@ def sample_operations_same_date() -> List[Dict[str, Any]]:
     """Фикстура, предоставляющая список операций с одинаковыми датами."""
     return [
         {"id": 1, "date": "2024-03-15T10:30:00", "state": "EXECUTED"},
-        {"id": 2, "date": "2024-03-15T14:20:00", "state": "PENDING"},
-        {"id": 3, "date": "2024-03-15T09:15:00", "state": "EXECUTED"},
+        {"id": 2, "date": "2024-03-15T10:30:00", "state": "PENDING"},
+        {"id": 3, "date": "2024-03-15T10:30:00", "state": "EXECUTED"},
     ]
 
 
@@ -316,13 +316,17 @@ def test_sort_by_date_preserves_original_order_for_equal_dates(
     # Arrange (Подготовка)
     original_order_ids = [item["id"] for item in sample_operations_same_date]
 
+    # Act (Действие)
     result = sort_by_date(sample_operations_same_date, reverse=False)
 
     # Assert (Проверка)
     result_ids = [item["id"] for item in result]
-    # Проверяем, что порядок сохранился (стабильная сортировка)
-    # Так как все даты одинаковы, порядок должен остаться неизменным
+    # При одинаковых датах порядок должен сохраниться
     assert result_ids == original_order_ids
+
+    # Дополнительная проверка: убеждаемся, что все даты действительно одинаковы
+    dates = [item["date"] for item in result]
+    assert all(date == dates[0] for date in dates)
 
 
 def test_sort_by_date_with_different_date_formats(

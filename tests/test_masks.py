@@ -35,22 +35,29 @@ def expected_mask() -> str:
 
 
 def test_get_mask_card_number_with_valid_integer(
-        valid_card_number: int,
-        expected_mask: str
+        valid_card_number: int
 ) -> None:
     """
     Тестирует маскировку корректного номера карты, переданного как целое число.
     Проверяет, что функция возвращает маску в правильном формате.
     """
-    # Act (Действие)
     result = get_mask_card_number(valid_card_number)
 
-    # Assert (Проверка)
-    assert result == expected_mask
     assert isinstance(result, str)
-    assert len(result) == 19  # "XXXX XX** **** XXXX" = 19 символов с пробелами
-    assert result.count(" ") == 3  # Проверяем наличие трех пробелов
+    assert len(result) == 19
+    assert result.count(" ") == 3
 
+    # Используем split() для проверки структуры
+    parts = result.split()
+    assert len(parts) == 4
+
+    card_str = str(valid_card_number)
+
+    # Проверяем каждый блок
+    assert parts[0] == card_str[:4]  # Первый блок: первые 4 цифры
+    assert parts[1] == card_str[4:6] + "**"  # Второй блок: 5-6 цифры + **
+    assert parts[2] == "****"  # Третий блок: всегда ****
+    assert parts[3] == card_str[-4:]  # Четвертый блок: последние 4 цифры
 
 
 def test_get_mask_card_number_with_valid_string(
@@ -61,20 +68,20 @@ def test_get_mask_card_number_with_valid_string(
     Тестирует маскировку корректного номера карты, переданного как строка.
     Проверяет, что функция корректно обрабатывает строковый тип данных.
     """
-    # Act (Действие)
     result = get_mask_card_number(valid_card_number_as_string)
 
-    # Assert (Проверка)
-    assert result == expected_mask
     assert isinstance(result, str)
-    # Проверяем структуру маски
+
     parts = result.split()
     assert len(parts) == 4
-    assert parts[0] == "7000"
-    assert parts[1] == "79**"
-    assert parts[2] == "****"
-    assert parts[3] == "6361"
+    assert parts[0] == valid_card_number_as_string[:4]  # Первые 4 цифры
+    assert parts[1] == valid_card_number_as_string[4:6] + "**"  # 5-6 цифры + **
+    assert parts[2] == "****"  # Средние 4 цифры всегда замаскированы
+    assert parts[3] == valid_card_number_as_string[-4:]  # Последние 4 цифры
 
+    # Дополнительная проверка формата
+    assert len(result) == 19  # "XXXX XX** **** XXXX" = 19 символов
+    assert result.count(" ") == 3  # Должно быть 3 пробела
 
 def test_get_mask_card_number_with_short_number(
         short_card_number: int
