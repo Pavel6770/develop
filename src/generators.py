@@ -82,4 +82,3 @@ def card_number_generator(start: int, end: int) -> Generator[str, None, None]:
         ])
 
         yield formatted_card
-
