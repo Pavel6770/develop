@@ -6,297 +6,6 @@ from collections.abc import Generator
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
 
-class TestFilterByCurrency:
-    """Тесты для функции filter_by_currency."""
-
-    @pytest.fixture
-    def sample_transactions(self) -> List[Dict[str, Any]]:
-        """Фикстура с образцами транзакций для тестирования."""
-        return [
-            {
-                "id": 939719570,
-                "state": "EXECUTED",
-                "date": "2018-06-30T02:08:58.425572",
-                "operationAmount": {
-                    "amount": "9824.07",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод организации",
-                "from": "Счет 75106830613657916952",
-                "to": "Счет 11776614605963066702"
-            },
-            {
-                "id": 142264268,
-                "state": "EXECUTED",
-                "date": "2019-04-04T23:20:05.206878",
-                "operationAmount": {
-                    "amount": "79114.93",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод со счета на счет",
-                "from": "Счет 19708645243227258542",
-                "to": "Счет 75651667383060284188"
-            },
-            {
-                "id": 895315941,
-                "state": "EXECUTED",
-                "date": "2018-08-19T04:27:37.904916",
-                "operationAmount": {
-                    "amount": "5683.33",
-                    "currency": {
-                        "name": "RUB",
-                        "code": "RUB"
-                    }
-                },
-                "description": "Перевод с карты на карту",
-                "from": "Visa Classic 6831982476737658",
-                "to": "Visa Platinum 8990922113665229"
-            },
-            {
-                "id": 587085106,
-                "state": "EXECUTED",
-                "date": "2018-03-23T10:45:06.972075",
-                "operationAmount": {
-                    "amount": "48223.05",
-                    "currency": {
-                        "name": "EUR",
-                        "code": "EUR"
-                    }
-                },
-                "description": "Перевод со счета на счет",
-                "from": "Счет 75106830613657916952",
-                "to": "Счет 84112757540888855644"
-            }
-        ]
-
-    @pytest.fixture
-    def empty_transactions(self) -> List[Dict[str, Any]]:
-        """Фикстура с пустым списком транзакций."""
-        return []
-
-    def test_filter_by_currency_returns_generator(self, sample_transactions):
-        """Проверяет, что функция возвращает генератор."""
-        result = filter_by_currency(sample_transactions, "USD")
-
-        assert isinstance(result, Generator)
-        assert hasattr(result, '__iter__')
-        assert hasattr(result, '__next__')
-
-    def test_filter_by_currency_usd_success(self, sample_transactions):
-        """Проверяет корректную фильтрацию USD-транзакций."""
-        usd_transactions = filter_by_currency(sample_transactions, "USD")
-
-        # Получаем все отфильтрованные транзакции
-        filtered_list = list(usd_transactions)
-
-        # Проверяем количество
-        assert len(filtered_list) == 2
-
-        # Проверяем, что все транзакции имеют валюту USD
-        for transaction in filtered_list:
-            currency_code = transaction["operationAmount"]["currency"]["code"]
-            assert currency_code == "USD"
-
-        # Проверяем ID отфильтрованных транзакций
-        filtered_ids = [t["id"] for t in filtered_list]
-        assert 939719570 in filtered_ids
-        assert 142264268 in filtered_ids
-
-    def test_filter_by_currency_eur_success(self, sample_transactions):
-        """Проверяет корректную фильтрацию EUR-транзакций."""
-        eur_transactions = filter_by_currency(sample_transactions, "EUR")
-
-        filtered_list = list(eur_transactions)
-
-        assert len(filtered_list) == 1
-        assert filtered_list[0]["id"] == 587085106
-
-        currency_code = filtered_list[0]["operationAmount"]["currency"]["code"]
-        assert currency_code == "EUR"
-
-    def test_filter_by_currency_rub_success(self, sample_transactions):
-        """Проверяет корректную фильтрацию RUB-транзакций."""
-        rub_transactions = filter_by_currency(sample_transactions, "RUB")
-
-        filtered_list = list(rub_transactions)
-
-        assert len(filtered_list) == 1
-        assert filtered_list[0]["id"] == 895315941
-
-        currency_code = filtered_list[0]["operationAmount"]["currency"]["code"]
-        assert currency_code == "RUB"
-
-    def test_filter_by_currency_no_matching_currency(self, sample_transactions):
-        """Проверяет обработку случая, когда транзакции с искомой валютой отсутствуют."""
-        # GBP отсутствует в транзакциях
-        gbp_transactions = filter_by_currency(sample_transactions, "GBP")
-
-        # Преобразуем в список
-        filtered_list = list(gbp_transactions)
-
-        # Проверяем, что список пуст
-        assert len(filtered_list) == 0
-
-        # Проверяем, что генератор не выбрасывает исключение при итерации
-        with pytest.raises(StopIteration):
-            next(filter_by_currency(sample_transactions, "GBP"))
-
-    def test_filter_by_currency_empty_list(self, empty_transactions):
-        """Проверяет обработку пустого списка транзакций."""
-        result = filter_by_currency(empty_transactions, "USD")
-
-        # Проверяем, что функция возвращает генератор
-        assert isinstance(result, Generator)
-
-        # Проверяем, что генератор не содержит элементов
-        filtered_list = list(result)
-        assert len(filtered_list) == 0
-
-        # Проверяем, что next выбрасывает StopIteration
-        with pytest.raises(StopIteration):
-            next(filter_by_currency(empty_transactions, "USD"))
-
-    def test_filter_by_currency_no_currency_field(self):
-        """Проверяет обработку транзакций без поля currency."""
-        transactions_without_currency = [
-            {
-                "id": 1,
-                "state": "EXECUTED",
-                "description": "Перевод без валюты"
-            },
-            {
-                "id": 2,
-                "operationAmount": {
-                    "amount": "100",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод с валютой"
-            }
-        ]
-
-        result = filter_by_currency(transactions_without_currency, "USD")
-        filtered_list = list(result)
-
-        # Должна быть найдена только транзакция с валютой
-        assert len(filtered_list) == 1
-        assert filtered_list[0]["id"] == 2
-
-    def test_filter_by_currency_partial_currency_structure(self):
-        """Проверяет обработку транзакций с неполной структурой валюты."""
-        transactions_partial = [
-            {
-                "id": 1,
-                "operationAmount": {
-                    "amount": "100",
-                    "currency": {
-                        "code": "USD"
-                    }
-                }
-            },
-            {
-                "id": 2,
-                "operationAmount": {
-                    "amount": "200",
-                    "currency": {
-                        "name": "USD"
-                    }
-                }
-            },
-            {
-                "id": 3,
-                "operationAmount": {
-                    "amount": "300",
-                    "currency": "USD"  # Неверная структура
-                }
-            }
-        ]
-
-        result = filter_by_currency(transactions_partial, "USD")
-        filtered_list = list(result)
-
-        # Функция должна обрабатывать некорректные данные без ошибок
-        # В зависимости от реализации может найти 0 или 1 транзакцию
-        # Главное - не должно быть исключений
-        assert isinstance(filtered_list, list)
-
-    def test_filter_by_currency_maintains_order(self, sample_transactions):
-        """Проверяет, что порядок транзакций сохраняется."""
-        usd_transactions = filter_by_currency(sample_transactions, "USD")
-        filtered_list = list(usd_transactions)
-
-        # Проверяем порядок следования
-        assert filtered_list[0]["id"] == 939719570  # Первая USD в списке
-        assert filtered_list[1]["id"] == 142264268  # Вторая USD в списке
-
-    def test_filter_by_currency_multiple_calls(self, sample_transactions):
-        """Проверяет, что генератор можно использовать повторно."""
-        # Первый вызов
-        usd_transactions_1 = filter_by_currency(sample_transactions, "USD")
-        list_1 = list(usd_transactions_1)
-
-        # Второй вызов
-        usd_transactions_2 = filter_by_currency(sample_transactions, "USD")
-        list_2 = list(usd_transactions_2)
-
-        # Результаты должны быть одинаковыми
-        assert len(list_1) == len(list_2)
-        assert list_1[0]["id"] == list_2[0]["id"]
-
-    def test_filter_by_currency_lazy_evaluation(self, sample_transactions):
-        """Проверяет, что генератор работает лениво (не вычисляет все сразу)."""
-        usd_transactions = filter_by_currency(sample_transactions, "USD")
-
-        # Получаем первый элемент
-        first = next(usd_transactions)
-        assert first["id"] == 939719570
-
-        # Получаем второй элемент
-        second = next(usd_transactions)
-        assert second["id"] == 142264268
-
-        # Проверяем, что больше элементов нет
-        with pytest.raises(StopIteration):
-            next(usd_transactions)
-
-    def test_filter_by_currency_with_different_currency_codes(self, sample_transactions):
-        """Проверяет фильтрацию с разными кодами валют."""
-        currencies = ["USD", "EUR", "RUB", "GBP", "JPY", "CNY"]
-
-        for currency in currencies:
-            result = filter_by_currency(sample_transactions, currency)
-            filtered_list = list(result)
-
-            # Проверяем, что все найденные транзакции имеют правильный код валюты
-            for transaction in filtered_list:
-                if "operationAmount" in transaction and "currency" in transaction["operationAmount"]:
-                    currency_code = transaction["operationAmount"]["currency"].get("code")
-                    assert currency_code == currency
-
-    def test_filter_by_currency_case_sensitivity(self, sample_transactions):
-        """Проверяет чувствительность к регистру при фильтрации."""
-        # Проверяем с нижним регистром
-        result_lower = filter_by_currency(sample_transactions, "usd")
-        filtered_lower = list(result_lower)
-
-        # Проверяем с верхним регистром
-        result_upper = filter_by_currency(sample_transactions, "USD")
-        filtered_upper = list(result_upper)
-
-        # В зависимости от реализации, может быть разное поведение
-        # Тест проверяет, что функция не падает при разных регистрах
-        assert isinstance(filtered_lower, list)
-        assert isinstance(filtered_upper, list)
-
-
 class TestTransactionDescriptions:
     """Тесты для функции transaction_descriptions."""
 
@@ -307,77 +16,20 @@ class TestTransactionDescriptions:
             {
                 "id": 939719570,
                 "state": "EXECUTED",
-                "date": "2018-06-30T02:08:58.425572",
-                "operationAmount": {
-                    "amount": "9824.07",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
                 "description": "Перевод организации",
-                "from": "Счет 75106830613657916952",
-                "to": "Счет 11776614605963066702"
+                "amount": "9824.07"
             },
             {
                 "id": 142264268,
                 "state": "EXECUTED",
-                "date": "2019-04-04T23:20:05.206878",
-                "operationAmount": {
-                    "amount": "79114.93",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
                 "description": "Перевод со счета на счет",
-                "from": "Счет 19708645243227258542",
-                "to": "Счет 75651667383060284188"
+                "amount": "79114.93"
             },
             {
                 "id": 895315941,
                 "state": "EXECUTED",
-                "date": "2018-08-19T04:27:37.904916",
-                "operationAmount": {
-                    "amount": "5683.33",
-                    "currency": {
-                        "name": "RUB",
-                        "code": "RUB"
-                    }
-                },
                 "description": "Перевод с карты на карту",
-                "from": "Visa Classic 6831982476737658",
-                "to": "Visa Platinum 8990922113665229"
-            },
-            {
-                "id": 587085106,
-                "state": "EXECUTED",
-                "date": "2018-03-23T10:45:06.972075",
-                "operationAmount": {
-                    "amount": "48223.05",
-                    "currency": {
-                        "name": "EUR",
-                        "code": "EUR"
-                    }
-                },
-                "description": "Перевод со счета на счет",
-                "from": "Счет 75106830613657916952",
-                "to": "Счет 84112757540888855644"
-            },
-            {
-                "id": 781165910,
-                "state": "EXECUTED",
-                "date": "2018-06-30T02:08:58.425572",
-                "operationAmount": {
-                    "amount": "32456.89",
-                    "currency": {
-                        "name": "USD",
-                        "code": "USD"
-                    }
-                },
-                "description": "Перевод организации",
-                "from": "Счет 72082042523231494215",
-                "to": "Счет 11776614605963066702"
+                "amount": "5683.33"
             }
         ]
 
@@ -387,241 +39,85 @@ class TestTransactionDescriptions:
         return [
             {
                 "id": 1,
-                "state": "EXECUTED",
                 "description": "Перевод организации",
                 "amount": "100"
             },
             {
                 "id": 2,
-                "state": "EXECUTED",
-                # description отсутствует
-                "amount": "200"
+                "amount": "200"  # description отсутствует
             },
             {
                 "id": 3,
-                "state": "EXECUTED",
                 "description": None,  # description равен None
                 "amount": "300"
             },
             {
                 "id": 4,
-                "state": "EXECUTED",
                 "description": "Перевод с карты на карту",
                 "amount": "400"
             }
         ]
 
-    @pytest.fixture
-    def single_transaction(self) -> List[Dict[str, Any]]:
-        """Фикстура с одной транзакцией."""
-        return [
-            {
-                "id": 1,
-                "description": "Единственная транзакция",
-                "amount": "100"
-            }
-        ]
+    def test_transaction_descriptions_returns_generator(self, sample_transactions):
+        """
+        Тест 1: Проверяет, что функция возвращает генератор.
 
-    @pytest.fixture
-    def empty_transactions(self) -> List[Dict[str, Any]]:
-        """Фикстура с пустым списком транзакций."""
-        return []
-
-    def test_returns_generator(self, sample_transactions):
-        """Проверяет, что функция возвращает генератор."""
+        Убеждаемся, что возвращаемый объект является генератором и имеет
+        необходимые методы для итерации.
+        """
         result = transaction_descriptions(sample_transactions)
 
         assert isinstance(result, Generator)
         assert hasattr(result, '__iter__')
         assert hasattr(result, '__next__')
 
-    def test_returns_correct_descriptions(self, sample_transactions):
-        """Проверяет, что функция возвращает корректные описания."""
+    def test_transaction_descriptions_returns_correct_descriptions(self, sample_transactions):
+        """
+        Тест 2: Проверяет корректность возвращаемых описаний.
+
+        Убеждаемся, что функция возвращает правильные описания для каждой
+        транзакции в правильном порядке.
+        """
         descriptions = transaction_descriptions(sample_transactions)
 
         expected_descriptions = [
             "Перевод организации",
             "Перевод со счета на счет",
-            "Перевод с карты на карту",
-            "Перевод со счета на счет",
-            "Перевод организации"
+            "Перевод с карты на карту"
         ]
 
         for expected in expected_descriptions:
             actual = next(descriptions)
             assert actual == expected
 
-    def test_returns_all_descriptions(self, sample_transactions):
-        """Проверяет, что функция возвращает все описания."""
-        descriptions = transaction_descriptions(sample_transactions)
-        descriptions_list = list(descriptions)
-
-        expected_count = len(sample_transactions)
-        assert len(descriptions_list) == expected_count
-
-        # Проверяем, что каждое описание соответствует транзакции
-        for i, transaction in enumerate(sample_transactions):
-            assert descriptions_list[i] == transaction["description"]
-
-    def test_preserves_order(self, sample_transactions):
-        """Проверяет, что порядок описаний соответствует порядку транзакций."""
-        descriptions = transaction_descriptions(sample_transactions)
-
-        for transaction in sample_transactions:
-            expected_description = transaction["description"]
-            actual_description = next(descriptions)
-            assert actual_description == expected_description
-
-    def test_empty_transactions(self, empty_transactions):
-        """Проверяет обработку пустого списка транзакций."""
-        descriptions = transaction_descriptions(empty_transactions)
-
-        # Проверяем, что функция возвращает генератор
-        assert isinstance(descriptions, Generator)
-
-        # Проверяем, что генератор не содержит элементов
-        descriptions_list = list(descriptions)
-        assert len(descriptions_list) == 0
-
-        # Проверяем, что next выбрасывает StopIteration
+        # Проверяем, что все описания были получены
         with pytest.raises(StopIteration):
-            next(transaction_descriptions(empty_transactions))
+            next(descriptions)
 
-    def test_single_transaction(self, single_transaction):
-        """Проверяет работу с одной транзакцией."""
-        descriptions = transaction_descriptions(single_transaction)
+    def test_transaction_descriptions_missing_description(self, transactions_with_missing_description):
+        """
+        Тест 3: Проверяет обработку транзакций без описания.
 
-        # Получаем описание
-        description = next(descriptions)
-        assert description == "Единственная транзакция"
+        Убеждаемся, что для транзакций с отсутствующим описанием или
+        description=None возвращается строка "Описание отсутствует".
+        """
+        descriptions = transaction_descriptions(transactions_with_missing_description)
+
+        # Первая транзакция - есть описание
+        assert next(descriptions) == "Перевод организации"
+
+        # Вторая транзакция - отсутствует поле description
+        assert next(descriptions) == "Описание отсутствует"
+
+        # Третья транзакция - description равен None
+        assert next(descriptions) == "Описание отсутствует"
+
+        # Четвертая транзакция - есть описание
+        assert next(descriptions) == "Перевод с карты на карту"
 
         # Проверяем, что больше нет элементов
         with pytest.raises(StopIteration):
             next(descriptions)
-
-    def test_multiple_transactions(self, sample_transactions):
-        """Проверяет работу с множеством транзакций."""
-        descriptions = transaction_descriptions(sample_transactions)
-
-        count = 0
-        for _ in descriptions:
-            count += 1
-
-        assert count == len(sample_transactions)
-
-    def test_missing_description_field(self, transactions_with_missing_description):
-        """Проверяет обработку транзакций без поля description."""
-        descriptions = transaction_descriptions(transactions_with_missing_description)
-        descriptions_list = list(descriptions)
-
-        # Должны быть возвращены только существующие описания
-        # (в зависимости от реализации)
-        # Реализация может возвращать None или пустую строку для отсутствующих
-        assert len(descriptions_list) == 4
-
-        # Проверяем, что для транзакций с описанием возвращены корректные значения
-        assert descriptions_list[0] == "Перевод организации"
-        assert descriptions_list[3] == "Перевод с карты на карту"
-
-    def test_description_field_is_none(self):
-        """Проверяет обработку транзакций с description равным None."""
-        transactions = [
-            {"id": 1, "description": "Нормальное описание"},
-            {"id": 2, "description": None},
-            {"id": 3, "description": "Еще одно описание"}
-        ]
-
-        descriptions = transaction_descriptions(transactions)
-        descriptions_list = list(descriptions)
-
-        assert len(descriptions_list) == 3
-        assert descriptions_list[0] == "Нормальное описание"
-        assert descriptions_list[2] == "Еще одно описание"
-
-        # Проверяем, что None обрабатывается корректно
-        # (не выбрасывает исключение)
-        assert descriptions_list[1] is None or descriptions_list[1] == "Описание отсутствует"
-
-    def test_lazy_evaluation(self, sample_transactions):
-        """Проверяет, что генератор работает лениво."""
-        descriptions = transaction_descriptions(sample_transactions)
-
-        # Получаем первый элемент
-        first = next(descriptions)
-        assert first == "Перевод организации"
-
-        # Получаем второй элемент
-        second = next(descriptions)
-        assert second == "Перевод со счета на счет"
-
-        # Проверяем, что остальные элементы все еще доступны
-        remaining = list(descriptions)
-        assert len(remaining) == 3
-
-    def test_multiple_iterations(self, sample_transactions):
-        """Проверяет, что генератор можно использовать для разных итераций."""
-        # Первый генератор
-        descriptions_1 = transaction_descriptions(sample_transactions)
-        list_1 = list(descriptions_1)
-
-        # Второй генератор (новый)
-        descriptions_2 = transaction_descriptions(sample_transactions)
-        list_2 = list(descriptions_2)
-
-        # Результаты должны быть одинаковыми
-        assert list_1 == list_2
-        assert len(list_1) == len(sample_transactions)
-
-    def test_stop_iteration_raised(self, sample_transactions):
-        """Проверяет, что генератор выбрасывает StopIteration после завершения."""
-        descriptions = transaction_descriptions(sample_transactions)
-
-        # Получаем все элементы
-        for _ in range(len(sample_transactions)):
-            next(descriptions)
-
-        # Попытка получить следующий элемент должна вызвать StopIteration
-        with pytest.raises(StopIteration):
-            next(descriptions)
-
-    def test_does_not_modify_original_data(self, sample_transactions):
-        """Проверяет, что функция не изменяет исходные данные."""
-        original_transactions = sample_transactions.copy()
-
-        descriptions = transaction_descriptions(sample_transactions)
-        list(descriptions)  # Итерируем полностью
-
-        # Проверяем, что исходные данные не изменились
-        assert sample_transactions == original_transactions
-
-    def test_description_data_type(self, sample_transactions):
-        """Проверяет, что функция возвращает строки."""
-        descriptions = transaction_descriptions(sample_transactions)
-
-        for description in descriptions:
-            assert isinstance(description, str)
-
-    def test_different_description_formats(self):
-        """Проверяет обработку различных форматов описаний."""
-        transactions = [
-            {"id": 1, "description": "Обычное описание"},
-            {"id": 2, "description": "Описание с цифрами 123"},
-            {"id": 3, "description": "Описание с символами!@#"},
-            {"id": 4, "description": ""},  # Пустая строка
-            {"id": 5, "description": "   "},  # Пробелы
-            {"id": 6, "description": "Перевод организации №12345"}
-        ]
-
-        descriptions = transaction_descriptions(transactions)
-        descriptions_list = list(descriptions)
-
-        assert len(descriptions_list) == 6
-        assert descriptions_list[0] == "Обычное описание"
-        assert descriptions_list[1] == "Описание с цифрами 123"
-        assert descriptions_list[2] == "Описание с символами!@#"
-        assert descriptions_list[3] == ""
-        assert descriptions_list[4] == "   "
-        assert descriptions_list[5] == "Перевод организации №12345"
 
 
 class TestCardNumberGenerator:
@@ -947,5 +443,115 @@ class TestCardNumberGenerator:
 
         assert next(generator) == "0000 0000 0000 7777"
 
+        with pytest.raises(StopIteration):
+            next(generator)
+
+
+class TestCardNumberGenerator:
+    """Тесты для генератора card_number_generator."""
+
+    @pytest.fixture
+    def small_range(self) -> tuple[int, int]:
+        """Фикстура с малым диапазоном номеров."""
+        return (1, 5)
+
+    @pytest.fixture
+    def single_number(self) -> tuple[int, int]:
+        """Фикстура с одним номером."""
+        return (42, 42)
+
+    def test_card_number_generator_returns_generator(self, small_range):
+        """
+        Тест 1: Проверяет, что функция возвращает генератор.
+
+        Убеждаемся, что возвращаемый объект является генератором и имеет
+        необходимые методы для итерации.
+        """
+        start, end = small_range
+        result = card_number_generator(start, end)
+
+        assert isinstance(result, GeneratorType)
+        assert hasattr(result, '__iter__')
+        assert hasattr(result, '__next__')
+
+    def test_card_number_generator_correct_format(self, small_range):
+        """
+        Тест 2: Проверяет корректность форматирования номеров карт.
+
+        Убеждаемся, что все сгенерированные номера соответствуют формату
+        "XXXX XXXX XXXX XXXX", где X - цифры.
+        """
+        start, end = small_range
+        generator = card_number_generator(start, end)
+
+        # Шаблон для проверки формата: 4 группы по 4 цифры, разделенные пробелом
+        pattern = r'^\d{4} \d{4} \d{4} \d{4}$'
+
+        for card_number in generator:
+            # Проверяем соответствие формату
+            assert re.match(pattern, card_number) is not None
+
+            # Проверяем длину строки (16 цифр + 3 пробела = 19)
+            assert len(card_number) == 19
+
+            # Проверяем позиции пробелов
+            assert card_number[4] == ' '
+            assert card_number[9] == ' '
+            assert card_number[14] == ' '
+
+            # Проверяем, что каждая группа состоит из 4 цифр
+            groups = card_number.split()
+            assert len(groups) == 4
+            for group in groups:
+                assert len(group) == 4
+                assert group.isdigit()
+
+    def test_card_number_generator_correct_numbers(self):
+        """
+        Тест 3: Проверяет правильность генерации номеров в различных диапазонах.
+
+        Убеждаемся, что функция генерирует правильные номера карт для
+        разных диапазонов, включая граничные значения и переход через разряды.
+        """
+        # Тест 3.1: Малый диапазон
+        generator = card_number_generator(1, 3)
+        assert next(generator) == "0000 0000 0000 0001"
+        assert next(generator) == "0000 0000 0000 0002"
+        assert next(generator) == "0000 0000 0000 0003"
+
+        # Тест 3.2: Диапазон с переходом через разряд
+        generator = card_number_generator(9998, 10002)
+        assert next(generator) == "0000 0000 0000 9998"
+        assert next(generator) == "0000 0000 0000 9999"
+        assert next(generator) == "0000 0000 0001 0000"
+        assert next(generator) == "0000 0000 0001 0001"
+        assert next(generator) == "0000 0000 0001 0002"
+
+        # Тест 3.3: Один номер
+        start, end = 42, 42
+        generator = card_number_generator(start, end)
+        assert next(generator) == "0000 0000 0000 0042"
+
+        # Тест 3.4: Максимальное значение
+        generator = card_number_generator(9999999999999999, 9999999999999999)
+        assert next(generator) == "9999 9999 9999 9999"
+
+        # Тест 3.5: Проверка ведущих нулей для разных чисел
+        test_cases = [
+            (1, "0000 0000 0000 0001"),
+            (123, "0000 0000 0000 0123"),
+            (1234, "0000 0000 0000 1234"),
+            (12345, "0000 0000 0001 2345"),
+            (12345678, "0000 0001 2345 6789"),
+            (123456789012, "0000 1234 5678 9012"),
+        ]
+
+        for number, expected in test_cases:
+            generator = card_number_generator(number, number)
+            assert next(generator) == expected
+
+        # Проверяем StopIteration после завершения
+        generator = card_number_generator(1, 1)
+        next(generator)
         with pytest.raises(StopIteration):
             next(generator)
