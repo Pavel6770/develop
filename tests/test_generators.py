@@ -172,45 +172,67 @@ def sample_transactions(self) -> List[Dict[str, Any]]:
     ]
 
 
-@pytest.fixture
-def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
-    """Фикстура с транзакциями, у которых отсутствует описание."""
-    return [
-        {
-            "id": 1,
-            "description": "Перевод организации",
-            "amount": "100"
-        },
-        {
-            "id": 2,
-            "amount": "200"  # description отсутствует
-        },
-        {
-            "id": 3,
-            "description": None,  # description равен None
-            "amount": "300"
-        },
-        {
-            "id": 4,
-            "description": "Перевод с карты на карту",
-            "amount": "400"
-        }
-    ]
-
-
-def test_transaction_descriptions_returns_generator(self, sample_transactions):
-    """
-    Тест: Проверяет, что функция возвращает генератор.
-    """
-    result = transaction_descriptions(sample_transactions)
-
-    assert isinstance(result, Generator)
-    assert hasattr(result, '__iter__')
-    assert hasattr(result, '__next__')
-
-
 class TestTransactionDescriptions:
     """Тесты для функции transaction_descriptions."""
+
+    @pytest.fixture
+    def sample_transactions(self) -> List[Dict[str, Any]]:
+        """Фикстура с образцами транзакций для тестирования."""
+        return [
+            {
+                "id": 939719570,
+                "state": "EXECUTED",
+                "description": "Перевод организации",
+                "amount": "9824.07"
+            },
+            {
+                "id": 142264268,
+                "state": "EXECUTED",
+                "description": "Перевод со счета на счет",
+                "amount": "79114.93"
+            },
+            {
+                "id": 895315941,
+                "state": "EXECUTED",
+                "description": "Перевод с карты на карту",
+                "amount": "5683.33"
+            }
+        ]
+
+    @pytest.fixture
+    def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
+        """Фикстура с транзакциями, у которых отсутствует описание."""
+        return [
+            {
+                "id": 1,
+                "description": "Перевод организации",
+                "amount": "100"
+            },
+            {
+                "id": 2,
+                "amount": "200"  # description отсутствует
+            },
+            {
+                "id": 3,
+                "description": None,  # description равен None
+                "amount": "300"
+            },
+            {
+                "id": 4,
+                "description": "Перевод с карты на карту",
+                "amount": "400"
+            }
+        ]
+
+    def test_transaction_descriptions_returns_generator(self, sample_transactions):
+        """
+        Тест: Проверяет, что функция возвращает генератор.
+        """
+        result = transaction_descriptions(sample_transactions)
+
+        assert isinstance(result, Generator)
+        assert hasattr(result, '__iter__')
+        assert hasattr(result, '__next__')
 
     @pytest.mark.parametrize("transactions, expected_descriptions", [
         # Случай 1: Обычные транзакции с описаниями
@@ -284,12 +306,64 @@ class TestTransactionDescriptions:
         assert result_descriptions == expected_descriptions
 
 
-@pytest.mark.parametrize("transactions, expected_descriptions", [
-    # Случай 1: Пропуск транзакций с отсутствующим описанием
-    (
+class TestTransactionDescriptions:
+    """Тесты для функции transaction_descriptions."""
+
+    @pytest.fixture
+    def sample_transactions(self) -> List[Dict[str, Any]]:
+        """Фикстура с образцами транзакций для тестирования."""
+        return [
+            {
+                "id": 939719570,
+                "state": "EXECUTED",
+                "description": "Перевод организации",
+                "amount": "9824.07"
+            },
+            {
+                "id": 142264268,
+                "state": "EXECUTED",
+                "description": "Перевод со счета на счет",
+                "amount": "79114.93"
+            },
+            {
+                "id": 895315941,
+                "state": "EXECUTED",
+                "description": "Перевод с карты на карту",
+                "amount": "5683.33"
+            }
+        ]
+
+    @pytest.fixture
+    def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
+        """Фикстура с транзакциями, у которых отсутствует описание."""
+        return [
+            {
+                "id": 1,
+                "description": "Перевод организации",
+                "amount": "100"
+            },
+            {
+                "id": 2,
+                "amount": "200"
+            },
+            {
+                "id": 3,
+                "description": None,
+                "amount": "300"
+            },
+            {
+                "id": 4,
+                "description": "Перевод с карты на карту",
+                "amount": "400"
+            }
+        ]
+
+    @pytest.mark.parametrize("transactions, expected_descriptions", [
+        # Случай 1: Пропуск транзакций с отсутствующим описанием
+        (
             [
                 {"id": 1, "description": "Перевод организации", "amount": "100"},
-                {"id": 2, "amount": "200"},  # description отсутствует
+                {"id": 2, "amount": "200"},
                 {"id": 3, "description": None, "amount": "300"},
                 {"id": 4, "description": "Перевод с карты на карту", "amount": "400"},
             ],
@@ -299,9 +373,9 @@ class TestTransactionDescriptions:
                 "Описание отсутствует",
                 "Перевод с карты на карту"
             ]
-    ),
-    # Случай 2: Все транзакции без описания
-    (
+        ),
+        # Случай 2: Все транзакции без описания
+        (
             [
                 {"id": 1, "amount": "100"},
                 {"id": 2, "description": None, "amount": "200"},
@@ -312,13 +386,13 @@ class TestTransactionDescriptions:
                 "Описание отсутствует",
                 "Описание отсутствует"
             ]
-    ),
-    # Случай 3: Смешанные данные с корректными и некорректными полями
-    (
+        ),
+        # Случай 3: Смешанные данные с корректными и некорректными полями
+        (
             [
                 {"id": 1, "description": "Нормальная транзакция", "amount": "100"},
-                {"id": 2, "wrong_field": "data"},  # нет поля description
-                {"id": 3, "description": "", "amount": "300"},  # пустая строка
+                {"id": 2, "wrong_field": "data"},
+                {"id": 3, "description": "", "amount": "300"},
                 {"id": 4, "description": "Еще одна нормальная", "amount": "400"},
             ],
             [
@@ -327,25 +401,25 @@ class TestTransactionDescriptions:
                 "",  # пустая строка возвращается как есть
                 "Еще одна нормальная"
             ]
-    ),
-])
-def test_transaction_descriptions_missing_description(
+        ),
+    ])
+    def test_transaction_descriptions_missing_description(
         self,
         transactions: List[Dict[str, Any]],
         expected_descriptions: List[str]
-):
-    """
-    Параметризованный тест 3: Проверяет обработку транзакций без описания.
-    """
-    descriptions = transaction_descriptions(transactions)
+    ):
+        """
+        Параметризованный тест: Проверяет обработку транзакций без описания.
+        """
+        descriptions = transaction_descriptions(transactions)
 
-    for expected in expected_descriptions:
-        actual = next(descriptions)
-        assert actual == expected
+        for expected in expected_descriptions:
+            actual = next(descriptions)
+            assert actual == expected
 
-    # Проверяем, что больше нет элементов
-    with pytest.raises(StopIteration):
-        next(descriptions)
+        # Проверяем, что больше нет элементов
+        with pytest.raises(StopIteration):
+            next(descriptions)
 
 
 class TestTransactionDescriptions:
