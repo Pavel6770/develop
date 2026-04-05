@@ -6,6 +6,51 @@ from collections.abc import Generator
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
 
+def test_filter_by_currency_matching_transactions():
+    """Тест 1: Фильтрация транзакций с совпадающей валютой."""
+    transactions = [
+        {"operationAmount": {"currency": {"code": "USD"}, "amount": "100"}},
+        {"operationAmount": {"currency": {"code": "EUR"}, "amount": "200"}},
+        {"operationAmount": {"currency": {"code": "USD"}, "amount": "300"}},
+    ]
+
+    result = filter_by_currency(transactions, "USD")
+
+    assert isinstance(result, Generator)
+    result_list = list(result)
+    assert len(result_list) == 2
+    assert all(t["operationAmount"]["currency"]["code"] == "USD" for t in result_list)
+
+
+def test_filter_by_currency_no_matching_transactions():
+    """Тест 2: Нет транзакций с указанной валютой."""
+    transactions = [
+        {"operationAmount": {"currency": {"code": "EUR"}, "amount": "100"}},
+        {"operationAmount": {"currency": {"code": "GBP"}, "amount": "200"}},
+    ]
+
+    result = filter_by_currency(transactions, "USD")
+
+    assert list(result) == []
+
+
+def test_filter_by_currency_skip_invalid_transactions():
+    """Тест 3: Пропуск транзакций с некорректной структурой."""
+    transactions = [
+        {"operationAmount": {"currency": {"code": "USD"}, "amount": "100"}},  # корректная
+        {"invalid": "structure"},  # некорректная (KeyError)
+        {"operationAmount": None, "amount": "200"},  # некорректная (TypeError)
+        {"operationAmount": {"currency": {"code": "USD"}, "amount": "300"}},  # корректная
+    ]
+
+    result = filter_by_currency(transactions, "USD")
+
+    result_list = list(result)
+    assert len(result_list) == 2
+    assert result_list[0]["operationAmount"]["amount"] == "100"
+    assert result_list[1]["operationAmount"]["amount"] == "300"
+
+
 class TestTransactionDescriptions:
     """Тесты для функции transaction_descriptions."""
 
