@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Union
 
 
 def mask_account_card(
-    account_info: str,
-    get_mask_account: Callable[[str], str],
-    get_mask_card_number: Callable[[str], str],
+        account_info: str,
+        get_mask_account: Callable[[str], str],
+        get_mask_card_number: Callable[[str], str],
 ) -> str:
     """
     Маскирует номер карты или счета.
@@ -33,7 +33,9 @@ def mask_account_card(
         IndexError: Если передана пустая строка или строка без номера
         ValueError: Если передан неизвестный тип карты/счета
     """
-    # Разделяем строку на части
+    if not account_info or not account_info.strip():
+        raise IndexError("Передана пустая строка")
+
     parts: list[str] = account_info.split()
 
     if not parts:
@@ -63,21 +65,40 @@ def mask_account_card(
     return f"{card_type} {masked_number}"
 
 
-def get_date(date_string: str) -> str:
+def get_date(date_string: Union[str, datetime]) -> str:
     """
     Преобразует дату из формата ISO в формат "ДД.ММ.ГГГГ".
 
     Args:
-        date_string: Строка с датой в формате ISO (например, "2024-03-11T02:26:18.671407")
+        date_string: Строка с датой в формате ISO или объект datetime
 
     Returns:
         Дата в формате "ДД.ММ.ГГГГ"
 
     Raises:
+        TypeError: Если передан не строковый тип
         ValueError: Если переданная строка не соответствует формату ISO
     """
-    # Парсим строку с датой
-    dt: datetime = datetime.fromisoformat(date_string)
+    # Проверка типа
+    if not isinstance(date_string, str):
+        raise TypeError(f"Ожидалась строка, получен {type(date_string).__name__}")
+
+    # Проверка на пустую строку
+    if not date_string or not date_string.strip():
+        raise ValueError(f"Строка '{date_string}' не соответствует формату ISO")
+
+    # Удаляем пробелы в начале и конце
+    date_string = date_string.strip()
+
+    try:
+        # Пробуем стандартный ISO формат с microseconds
+        dt: datetime = datetime.fromisoformat(date_string.replace('Z', '+00:00'))
+    except ValueError as e:
+        # Пробуем формат без времени (YYYY-MM-DD)
+        try:
+            dt = datetime.strptime(date_string, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError(f"Строка '{date_string}' не соответствует формату ISO") from e
 
     # Возвращаем дату в нужном формате
     return dt.strftime("%d.%m.%Y")

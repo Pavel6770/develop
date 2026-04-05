@@ -21,6 +21,9 @@ lint = [
     "isort (>=7.0.0,<8.0.0)",
     "mypy (>=1.19.1,<2.0.0)"
 ]
+dev = [
+    "pytest-cov (>=7.1.0,<8.0.0)"
+]
 
 [tool.mypy]
 disallow_untyped_defs = true
