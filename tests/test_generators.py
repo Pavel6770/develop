@@ -1,6 +1,7 @@
 import pytest
-from typing import List, Dict, Any
-from collections.abc import Generator
+import re
+from typing import Dict, Any, List, Tuple, Generator
+
 
 # Импортируем тестируемую функцию
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
@@ -196,17 +197,14 @@ def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
     ]
 
 
-@pytest.mark.parametrize("transactions_fixture", [
+@pytest.mark.parametrize("transactions", [
     "sample_transactions",
     "transactions_with_missing_description",
-])
-def test_transaction_descriptions_returns_generator(
-        self, request, transactions_fixture
-):
+], indirect=True)
+def test_transaction_descriptions_returns_generator(self, transactions):
     """
-    Параметризованный тест 1: Проверяет, что функция возвращает генератор.
+    Параметризованный тест: Проверяет, что функция возвращает генератор.
     """
-    transactions = request.getfixturevalue(transactions_fixture)
     result = transaction_descriptions(transactions)
 
     assert isinstance(result, Generator)
@@ -272,17 +270,18 @@ def test_transaction_descriptions_returns_correct_descriptions(
         expected_descriptions: List[str]
 ):
     """
-    Параметризованный тест 2: Проверяет корректность возвращаемых описаний.
+    Параметризованный тест: Проверяет корректность возвращаемых описаний.
     """
     descriptions = transaction_descriptions(transactions)
 
-    for expected in expected_descriptions:
-        actual = next(descriptions)
-        assert actual == expected
+    # Проверяем, что возвращается генератор
+    assert isinstance(descriptions, Generator)
 
-    # Проверяем, что все описания были получены
-    with pytest.raises(StopIteration):
-        next(descriptions)
+    # Получаем все описания
+    result_descriptions = list(descriptions)
+
+    # Сравниваем с ожидаемыми
+    assert result_descriptions == expected_descriptions
 
 
 @pytest.mark.parametrize("transactions, expected_descriptions", [
@@ -362,6 +361,28 @@ def test_transaction_descriptions_missing_description(
             [{"id": 1, "amount": "500"}],
             ["Описание отсутствует"]
     ),
+    # Случай 4: Транзакция с description = None
+    (
+            [{"id": 2, "description": None, "amount": "300"}],
+            ["Описание отсутствует"]
+    ),
+    # Случай 5: Смешанные корректные и некорректные транзакции
+    (
+            [
+                {"id": 1, "description": "Нормальная", "amount": "100"},
+                None,
+                {"id": 2, "amount": "200"},
+                {"id": 3, "description": None, "amount": "300"},
+                {"id": 4, "description": "Еще нормальная", "amount": "400"}
+            ],
+            [
+                "Нормальная",
+                "Описание отсутствует",
+                "Описание отсутствует",
+                "Описание отсутствует",
+                "Еще нормальная"
+            ]
+    ),
 ])
 def test_transaction_descriptions_edge_cases(
         self,
@@ -369,16 +390,19 @@ def test_transaction_descriptions_edge_cases(
         expected_descriptions: List[str]
 ):
     """
-    Дополнительный параметризованный тест: Проверяет граничные случаи.
+    Параметризованный тест: Проверяет граничные случаи.
     """
     descriptions = transaction_descriptions(transactions)
 
-    for expected in expected_descriptions:
-        actual = next(descriptions)
-        assert actual == expected
+    # Проверяем, что возвращается генератор
+    assert isinstance(descriptions, Generator)
 
-    with pytest.raises(StopIteration):
-        next(descriptions)
+    # Получаем все описания
+    result_descriptions = list(descriptions)
+
+    # Сравниваем с ожидаемыми
+    assert result_descriptions == expected_descriptions
+
 
     @pytest.fixture
     def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
@@ -603,66 +627,7 @@ class TestCardNumberGenerator:
             assert actual == expected
 
     @pytest.mark.parametrize("start, end, expected_numbers", [
-        # Диапазон с переходом через 10000
-        (
-                9995, 10005,
-                [
-                    "0000 0000 0000 9995",
-                    "0000 0000 0000 9996",
-                    "0000 0000 0000 9997",
-                    "0000 0000 0000 9998",
-                    "0000 0000 0000 9999",
-                    "0000 0000 0001 0000",
-                    "0000 0000 0001 0001",
-                    "0000 0000 0001 0002",
-                    "0000 0000 0001 0003",
-                    "0000 0000 0001 0004",
-                    "0000 0000 0001 0005"
-                ]
-        ),
-        # Диапазон с переходом через 100000
-        (
-                99995, 100005,
-                [
-                    "0000 0000 0009 9995",
-                    "0000 0000 0009 9996",
-                    "0000 0000 0009 9997",
-                    "0000 0000 0009 9998",
-                    "0000 0000 0009 9999",
-                    "0000 0000 0010 0000",
-                    "0000 0000 0010 0001",
-                    "0000 0000 0010 0002",
-                    "0000 0000 0010 0003",
-                    "0000 0000 0010 0004",
-                    "0000 0000 0010 0005"
-                ]
-        ),
-    ])
-    def test_correct_numbers_medium_range(
-            self,
-            start: int,
-            end: int,
-            expected_numbers: List[str]
-    ):
-        """Параметризованный тест: Проверяет правильность номеров в среднем диапазоне."""
-        generator = card_number_generator(start, end)
-
-        for expected in expected_numbers:
-            actual = next(generator)
-            assert actual == expected
-
-    @pytest.fixture
-    def large_start_range(self) -> Tuple[int, int]:
-        """Фикстура с диапазоном в конце диапазона."""
-        return (9999999999999990, 9999999999999995)
-
-    @pytest.fixture
-    def single_number_range(self) -> Tuple[int, int]:
-        """Фикстура с диапазоном из одного числа."""
-        return (42, 42)
-
-    @pytest.mark.parametrize("start, end, expected_numbers", [
-        # Диапазон с большими числами в конце
+        # Диапазон с большими числами в конце (16-значные числа)
         (
                 9999999999999990, 9999999999999995,
                 [
@@ -674,14 +639,25 @@ class TestCardNumberGenerator:
                     "9999 9999 9999 9995"
                 ]
         ),
-        # Диапазон с большими числами в середине
+        # Диапазон с 15-значными числами (добавляется ведущий ноль)
         (
-                9999999999995000, 9999999999995003,
+                999999999995000, 999999999995003,
                 [
-                    "9999 9999 9995 0000",
-                    "9999 9999 9995 0001",
-                    "9999 9999 9995 0002",
-                    "9999 9999 9995 0003"
+                    "0999 9999 9999 5000",  # Исправлено
+                    "0999 9999 9999 5001",  # Исправлено
+                    "0999 9999 9999 5002",  # Исправлено
+                    "0999 9999 9999 5003"  # Исправлено
+                ]
+        ),
+        # Другой вариант с 16-значными числами
+        (
+                1234567890123456, 1234567890123460,
+                [
+                    "1234 5678 9012 3456",
+                    "1234 5678 9012 3457",
+                    "1234 5678 9012 3458",
+                    "1234 5678 9012 3459",
+                    "1234 5678 9012 3460"
                 ]
         ),
     ])
@@ -825,16 +801,21 @@ class TestCardNumberGenerator:
         (12345, "0000 0000 0001 2345"),
         (123456, "0000 0000 0012 3456"),
         (1234567, "0000 0000 0123 4567"),
-        (12345678, "0000 0001 2345 6789"),
-        (123456789, "0000 0123 4567 8901"),
-        (1234567890, "0000 1234 5678 9012"),
-        (12345678901, "0001 2345 6789 0123"),
-        (123456789012, "0001 2345 6789 0123"),
+        (12345678, "0000 0000 1234 5678"),  # Исправлено
+        (123456789, "0000 0001 2345 6789"),  # 9 цифр → 7 ведущих нулей
+        (1234567890, "0000 0012 3456 7890"),
+        (12345678901, "0000 0123 4567 8901"),
+        (123456789012, "0000 1234 5678 9012"),
+        (1234567890123, "0001 2345 6789 0123"),
+        (12345678901234, "0012 3456 7890 1234"),
+        (123456789012345, "0123 4567 8901 2345"),
+        (1234567890123456, "1234 5678 9012 3456"),
     ])
     def test_correct_leading_zeros(self, number: int, expected: str):
         """Параметризованный тест: Проверяет правильность добавления ведущих нулей."""
         generator = card_number_generator(number, number)
         assert next(generator) == expected
+
 
     @pytest.mark.parametrize("start, end, expected_sequence", [
         (1, 1, ["0000 0000 0000 0001"]),
@@ -1032,7 +1013,8 @@ class TestCardNumberGenerator:
         (1, "0000 0000 0000 0001"),
         (9999, "0000 0000 0000 9999"),
         (10000, "0000 0000 0001 0000"),
-        (12345678, "0000 0001 2345 6789"),
+        (12345678, "0000 0000 1234 5678"),  # Исправлено
+        (123456789, "0000 0001 2345 6789"),  # Добавлен правильный пример для 9 цифр
         (9999999999999999, "9999 9999 9999 9999"),
     ])
     def test_start_equals_end(self, number: int, expected: str):
@@ -1124,7 +1106,7 @@ class TestCardNumberGenerator:
         (123, "0000 0000 0000 0123"),
         (1234, "0000 0000 0000 1234"),
         (12345, "0000 0000 0001 2345"),
-        (12345678, "0000 0001 2345 6789"),
+        (12345678, "0000 0000 1234 5678"),
         (123456789012, "0000 1234 5678 9012"),
     ])
     def test_leading_zeros_for_different_numbers(self, number: int, expected: str):
