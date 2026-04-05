@@ -1,11 +1,11 @@
 import pytest
-import re
-from typing import Dict, Any, List, Tuple, Generator
+from typing import Dict, Any, List, Tuple
+from collections.abc import Generator
 
 
 # Импортируем тестируемую функцию
-from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
-
+from src.generators import filter_by_currency, card_number_generator
+from src.generators import transaction_descriptions
 
 @pytest.mark.parametrize("transactions, currency, expected_count, expected_amounts", [
     # Случай 1: Несколько транзакций с совпадающей валютой
@@ -197,24 +197,23 @@ def transactions_with_missing_description(self) -> List[Dict[str, Any]]:
     ]
 
 
-@pytest.mark.parametrize("transactions", [
-    "sample_transactions",
-    "transactions_with_missing_description",
-], indirect=True)
-def test_transaction_descriptions_returns_generator(self, transactions):
+def test_transaction_descriptions_returns_generator(self, sample_transactions):
     """
-    Параметризованный тест: Проверяет, что функция возвращает генератор.
+    Тест: Проверяет, что функция возвращает генератор.
     """
-    result = transaction_descriptions(transactions)
+    result = transaction_descriptions(sample_transactions)
 
     assert isinstance(result, Generator)
     assert hasattr(result, '__iter__')
     assert hasattr(result, '__next__')
 
 
-@pytest.mark.parametrize("transactions, expected_descriptions", [
-    # Случай 1: Обычные транзакции с описаниями
-    (
+class TestTransactionDescriptions:
+    """Тесты для функции transaction_descriptions."""
+
+    @pytest.mark.parametrize("transactions, expected_descriptions", [
+        # Случай 1: Обычные транзакции с описаниями
+        (
             [
                 {
                     "id": 939719570,
@@ -240,11 +239,11 @@ def test_transaction_descriptions_returns_generator(self, transactions):
                 "Перевод со счета на счет",
                 "Перевод с карты на карту"
             ]
-    ),
-    # Случай 2: Пустой список транзакций
-    ([], []),
-    # Случай 3: Одна транзакция
-    (
+        ),
+        # Случай 2: Пустой список транзакций
+        ([], []),
+        # Случай 3: Одна транзакция
+        (
             [
                 {
                     "id": 1,
@@ -253,35 +252,35 @@ def test_transaction_descriptions_returns_generator(self, transactions):
                 }
             ],
             ["Оплата услуг"]
-    ),
-    # Случай 4: Транзакции с одинаковыми описаниями
-    (
+        ),
+        # Случай 4: Транзакции с одинаковыми описаниями
+        (
             [
                 {"id": 1, "description": "Перевод", "amount": "100"},
                 {"id": 2, "description": "Перевод", "amount": "200"},
                 {"id": 3, "description": "Перевод", "amount": "300"},
             ],
             ["Перевод", "Перевод", "Перевод"]
-    ),
-])
-def test_transaction_descriptions_returns_correct_descriptions(
+        ),
+    ])
+    def test_transaction_descriptions_returns_correct_descriptions(
         self,
         transactions: List[Dict[str, Any]],
         expected_descriptions: List[str]
-):
-    """
-    Параметризованный тест: Проверяет корректность возвращаемых описаний.
-    """
-    descriptions = transaction_descriptions(transactions)
+    ):
+        """
+        Параметризованный тест: Проверяет корректность возвращаемых описаний.
+        """
+        descriptions = transaction_descriptions(transactions)
 
-    # Проверяем, что возвращается генератор
-    assert isinstance(descriptions, Generator)
+        # Проверяем, что возвращается генератор
+        assert isinstance(descriptions, Generator)
 
-    # Получаем все описания
-    result_descriptions = list(descriptions)
+        # Получаем все описания
+        result_descriptions = list(descriptions)
 
-    # Сравниваем с ожидаемыми
-    assert result_descriptions == expected_descriptions
+        # Сравниваем с ожидаемыми
+        assert result_descriptions == expected_descriptions
 
 
 @pytest.mark.parametrize("transactions, expected_descriptions", [
@@ -348,26 +347,29 @@ def test_transaction_descriptions_missing_description(
         next(descriptions)
 
 
-@pytest.mark.parametrize("transactions, expected_descriptions", [
-    # Случай 1: Пустой список
-    ([], []),
-    # Случай 2: Список с None вместо транзакции
-    (
+class TestTransactionDescriptions:
+    """Тесты для функции transaction_descriptions."""
+
+    @pytest.mark.parametrize("transactions, expected_descriptions", [
+        # Случай 1: Пустой список
+        ([], []),
+        # Случай 2: Список с None вместо транзакции
+        (
             [None, {"description": "valid", "amount": "100"}],
             ["Описание отсутствует", "valid"]
-    ),
-    # Случай 3: Транзакция без поля description
-    (
+        ),
+        # Случай 3: Транзакция без поля description
+        (
             [{"id": 1, "amount": "500"}],
             ["Описание отсутствует"]
-    ),
-    # Случай 4: Транзакция с description = None
-    (
+        ),
+        # Случай 4: Транзакция с description = None
+        (
             [{"id": 2, "description": None, "amount": "300"}],
             ["Описание отсутствует"]
-    ),
-    # Случай 5: Смешанные корректные и некорректные транзакции
-    (
+        ),
+        # Случай 5: Смешанные корректные и некорректные транзакции
+        (
             [
                 {"id": 1, "description": "Нормальная", "amount": "100"},
                 None,
@@ -382,26 +384,26 @@ def test_transaction_descriptions_missing_description(
                 "Описание отсутствует",
                 "Еще нормальная"
             ]
-    ),
-])
-def test_transaction_descriptions_edge_cases(
+        ),
+    ])
+    def test_transaction_descriptions_edge_cases(
         self,
         transactions: List[Dict[str, Any]],
         expected_descriptions: List[str]
-):
-    """
-    Параметризованный тест: Проверяет граничные случаи.
-    """
-    descriptions = transaction_descriptions(transactions)
+    ):
+        """
+        Параметризованный тест: Проверяет граничные случаи.
+        """
+        descriptions = transaction_descriptions(transactions)
 
-    # Проверяем, что возвращается генератор
-    assert isinstance(descriptions, Generator)
+        # Проверяем, что возвращается генератор
+        assert isinstance(descriptions, Generator)
 
-    # Получаем все описания
-    result_descriptions = list(descriptions)
+        # Получаем все описания
+        result_descriptions = list(descriptions)
 
-    # Сравниваем с ожидаемыми
-    assert result_descriptions == expected_descriptions
+        # Сравниваем с ожидаемыми
+        assert result_descriptions == expected_descriptions
 
 
     @pytest.fixture

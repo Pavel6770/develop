@@ -26,23 +26,24 @@ def filter_by_currency(transactions: List[Dict[str, Any]], currency: str) -> Gen
 
 def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Generator[str, None, None]:
     """
-    Генератор, возвращающий описания транзакций по очереди.
+    Возвращает описания транзакций.
 
     Args:
         transactions: Список словарей с данными о транзакциях
 
     Returns:
-        Генератор строк с описаниями транзакций
-
-    Raises:
-        TypeError: Если транзакция не является словарем
+        Генератор строк с описаниями
     """
     for transaction in transactions:
+        # Проверяем, что транзакция - это словарь
         if not isinstance(transaction, dict):
-            raise TypeError(f"Каждая транзакция должна быть словарем, получено: {type(transaction)}")
+            yield "Описание отсутствует"
+            continue
 
+        # Получаем описание
         description = transaction.get("description")
 
+        # Если описание отсутствует или равно None
         if description is None:
             yield "Описание отсутствует"
         else:
