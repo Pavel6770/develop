@@ -4,7 +4,7 @@ Unit tests for the log decorator module.
 Tests cover console output, file logging, successful execution,
 and exception handling scenarios.
 """
-
+import sys
 import os
 import tempfile
 from pathlib import Path
