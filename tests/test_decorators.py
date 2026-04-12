@@ -312,24 +312,52 @@ class TestEdgeCases:
 class TestMixedScenarios:
     """Test suite for scenarios with multiple decorator instances."""
 
-    def test_console_and_file_decorators_can_coexist(self, temp_log_file, capsys):
-        """Test that console logger and file logger can work independently."""
-        @log()  # Logs to console
+    @pytest.fixture
+    def temp_log_file(self):
+        """Fixture that creates a temporary log file and cleans up after test."""
+        import tempfile
+        import os
+
+        with tempfile.NamedTemporaryFile(
+                mode='w+',
+                suffix='.txt',
+                delete=False,
+                encoding='utf-8'
+        ) as tmp_file:
+            temp_filename = tmp_file.name
+
+        yield temp_filename
+
+        # Cleanup after test
+        if os.path.exists(temp_filename):
+            os.unlink(temp_filename)
+
+    def test_console_logging_works(self, capsys):
+        """Test console logging independently."""
+        from decorators import log
+
+        @log()
         def console_func(x: int) -> int:
             return x + 1
 
-        @log(filename=temp_log_file)  # Logs to file
-        def file_func(x: int) -> int:
-            return x * 2
+        capsys.readouterr()  # Clear
+        result = console_func(10)
 
-        console_func(10)
-        file_func(5)
-
-        # Check console output
+        assert result == 11
         captured = capsys.readouterr()
         assert "console_func ok" in captured.out
 
-        # Check file output
+    def test_file_logging_works(self, temp_log_file):
+        """Test file logging independently."""
+        from decorators import log
+
+        @log(filename=temp_log_file)
+        def file_func(x: int) -> int:
+            return x * 2
+
+        result = file_func(5)
+
+        assert result == 10
         with open(temp_log_file, 'r', encoding='utf-8') as f:
             content = f.read()
         assert "file_func ok" in content
@@ -373,8 +401,29 @@ class TestMixedScenarios:
 class TestDecoratorParameters:
     """Test suite for decorator parameter handling."""
 
+    @pytest.fixture
+    def temp_log_file(self):
+        """Fixture that creates a temporary log file and cleans up after test."""
+        import tempfile
+        import os
+
+        with tempfile.NamedTemporaryFile(
+                mode='w+',
+                suffix='.txt',
+                delete=False,
+                encoding='utf-8'
+        ) as tmp_file:
+            temp_filename = tmp_file.name
+
+        yield temp_filename
+
+        # Cleanup after test
+        if os.path.exists(temp_filename):
+            os.unlink(temp_filename)
+
     def test_log_with_filename_parameter(self, temp_log_file):
         """Test that decorator accepts filename parameter."""
+
         @log(filename=temp_log_file)
         def test_func(x: int) -> int:
             return x * 2
@@ -387,6 +436,7 @@ class TestDecoratorParameters:
 
     def test_log_without_filename_parameter(self, capsys):
         """Test that decorator works without filename parameter."""
+
         @log()
         def test_func(x: int) -> int:
             return x * 3
