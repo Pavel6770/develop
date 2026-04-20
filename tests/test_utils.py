@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 import unittest
+import requests
 from typing import List, Dict, Any
 from src.utils import load_transactions
 

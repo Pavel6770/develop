@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
+import requests
 from src.external_api import convert_to_rub, get_exchange_rate, get_fallback_rate
 
 
