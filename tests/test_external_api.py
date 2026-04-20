@@ -64,6 +64,52 @@ class TestConvertToRub:
         assert result == 0.0
         mock_get_rate.assert_called_once_with(currency)
 
+    def test_negative_amount(self):
+        """Отрицательные суммы"""
+        with patch('src.external_api.get_exchange_rate') as mock:
+            mock.return_value = 92.50
+            result = convert_to_rub({"amount": -100, "currency": "USD"})
+            assert result == -9250.0
+
+    def test_large_amount(self):
+        """Большие суммы"""
+        with patch('src.external_api.get_exchange_rate') as mock:
+            mock.return_value = 92.50
+            result = convert_to_rub({"amount": 1_000_000, "currency": "USD"})
+            assert result == 92_500_000.0
+
+    def test_decimal_precision(self):
+        """Точность десятичных дробей"""
+        with patch('src.external_api.get_exchange_rate') as mock:
+            mock.return_value = 92.75
+            result = convert_to_rub({"amount": 100.55, "currency": "USD"})
+            assert result == 100.55 * 92.75
+
+    def test_missing_amount(self):
+        """Отсутствие ключа amount"""
+        result = convert_to_rub({"currency": "USD"})
+        assert result == 0.0
+
+    def test_amount_as_string(self):
+        """Сумма в виде строки - должна конвертироваться в число"""
+        with patch('src.external_api.get_exchange_rate') as mock_rate:
+            mock_rate.return_value = 92.50
+            result = convert_to_rub({"amount": "100", "currency": "USD"})
+            assert result == 9250.0
+
+    def test_extra_fields_ignored(self):
+        """Дополнительные поля игнорируются"""
+        with patch('src.external_api.get_exchange_rate') as mock:
+            mock.return_value = 92.50
+            transaction = {"amount": 100, "currency": "USD", "id": 1, "desc": "test"}
+            result = convert_to_rub(transaction)
+            assert result == 9250.0
+
+    def test_returns_float(self):
+        """Проверка типа возвращаемого значения"""
+        result = convert_to_rub({"amount": 100, "currency": "RUB"})
+        assert isinstance(result, float)
+
 
 class TestGetExchangeRate:
     """Тесты для функции get_exchange_rate"""

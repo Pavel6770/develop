@@ -9,21 +9,16 @@ API_URL = "https://marketplace.apilayer.com/account"  # Пример API (мож
 def convert_to_rub(transaction: Dict[str, Any]) -> float:
     """
     Конвертирует сумму транзакции в рубли.
-
-    Args:
-        transaction (Dict[str, Any]): Словарь с данными о транзакции.
-                                     Должен содержать ключи 'amount' и 'currency'
-
-    Returns:
-        float: Сумма в рублях
-
-    Examples:
-        >>> transaction = {"amount": 100, "currency": "USD"}
-        >>> convert_to_rub(transaction)  # 100 * курс USD/RUB
-        9500.0
     """
     amount = transaction.get('amount', 0.0)
     currency = transaction.get('currency', 'RUB').upper()
+
+    # Обработка строковых значений amount
+    if isinstance(amount, str):
+        try:
+            amount = float(amount)
+        except (ValueError, TypeError):
+            amount = 0.0
 
     # Если сумма в рублях или валюта не указана
     if currency == 'RUB':
@@ -35,11 +30,10 @@ def convert_to_rub(transaction: Dict[str, Any]) -> float:
         if rate is not None:
             return float(amount * rate)
         else:
-            # Если не удалось получить курс, возвращаем 0 или можно вызвать исключение
             print(f"Не удалось получить курс для {currency}")
             return 0.0
 
-    # Для других валют можно добавить обработку
+    # Для других валют
     print(f"Валюта {currency} не поддерживается для конвертации")
     return 0.0
 
