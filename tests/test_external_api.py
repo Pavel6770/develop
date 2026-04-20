@@ -1,12 +1,12 @@
+import sys
+sys.path.insert(0, '.')
+
 import pytest
 from unittest.mock import patch, MagicMock
 import requests
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from src.external_api import convert_to_rub
-from src.external_api import get_exchange_rate
-from src.external_api import get_fallback_rate
+
+from src.external_api import convert_to_rub, get_exchange_rate, get_fallback_rate
 
 
 class TestConvertToRub:

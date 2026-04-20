@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 
 # API ключ для внешнего сервиса
 API_KEY = "ZTbjgKuTjQ2A245ZEMu3MMHiaygy2UMc"
-API_URL = "https://api.apilayer.com/exchangerates_data/convert"  # Пример API (можно заменить)
+API_URL = "https://marketplace.apilayer.com/account"  # Пример API (можно заменить)
 
 
 def convert_to_rub(transaction: Dict[str, Any]) -> float:
