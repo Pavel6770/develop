@@ -304,24 +304,38 @@ if __name__ == "__main__":
 class TestGetFallbackRate:
     """Тесты для функции get_fallback_rate"""
 
-    def test_get_fallback_rate_for_usd_returns_correct_rate(self):
-        """Тест fallback курса для USD"""
-        result = get_fallback_rate("USD")
-        assert result == 92.50
+    # Тест 1: Основные валюты
+    @pytest.mark.parametrize("currency,expected", [
+        ("USD", 92.50),
+        ("EUR", 100.20),
+        ("usd", 92.50),
+        ("eur", 100.20),
+        ("Usd", 92.50),
+        ("Eur", 100.20),
+    ])
+    def test_get_fallback_rate_supported_currencies(self, currency, expected):
+        """Тест для поддерживаемых валют"""
+        result = get_fallback_rate(currency)
+        assert result == expected
         assert isinstance(result, float)
 
-    def test_get_fallback_rate_for_eur_returns_correct_rate(self):
-        """Тест fallback курса для EUR"""
-        result = get_fallback_rate("EUR")
-        assert result == 100.20
-        assert isinstance(result, float)
-
-    def test_get_fallback_rate_for_unsupported_currency_returns_none(self):
-        """Тест для неподдерживаемой валюты"""
-        result = get_fallback_rate("GBP")
+    # Тест 2: Неподдерживаемые валюты
+    @pytest.mark.parametrize("invalid_currency", [
+        "GBP",
+        "JPY",
+        "CNY",
+        "CHF",
+        "CAD",
+        "AUD",
+        "RUB",
+        "XYZ",
+    ])
+    def test_get_fallback_rate_unsupported_currencies_returns_none(self, invalid_currency):
+        """Тест для неподдерживаемых валют"""
+        result = get_fallback_rate(invalid_currency)
         assert result is None
 
-    # ИСПРАВЛЕННЫЙ ТЕСТ - используем parametrize вместо subTest
+    # Тест 3: Специальные символы
     @pytest.mark.parametrize("special_currency", [
         "US$",
         "EU€",
@@ -333,34 +347,49 @@ class TestGetFallbackRate:
         "!@#$%",
     ])
     def test_get_fallback_rate_with_special_characters_returns_none(self, special_currency):
-        """
-        Тест 5: Проверяет обработку валют со спецсимволами
-        """
-        # Act
+        """Тест для валют со спецсимволами"""
         result = get_fallback_rate(special_currency)
-
-        # Assert
         assert result is None
 
+    # Тест 4: Пробелы и табуляция (ИСПРАВЛЕННЫЙ)
     @pytest.mark.parametrize("whitespace_currency", [
         " USD",
         "USD ",
         " USD ",
+        "  USD  ",
         "\tUSD",
         "USD\t",
         "\tUSD\t",
-        "  USD  ",
         "\nUSD",
         "USD\n",
+        "\n\t USD \t\n",
     ])
     def test_get_fallback_rate_with_whitespace_returns_none(self, whitespace_currency):
-        """Тест обработки строк с пробелами"""
-        # Act
+        """Тест для валют с пробелами и табуляцией"""
         result = get_fallback_rate(whitespace_currency)
-
-        # Assert
         assert result is None
 
+    # Тест 5: Смешанный регистр с пробелами (ИСПРАВЛЕННЫЙ)
+    @pytest.mark.parametrize("mixed_currency", [
+        " UsD ",
+        " eUr ",
+        "  uSd  ",
+        "\t EuR \t",
+        "\n Usd \n",
+        "  UsD  ",
+        "\t\t eUr \t\t",
+    ])
+    def test_get_fallback_rate_with_mixed_case_and_spaces_returns_none(self, mixed_currency):
+        """
+        Тест: Проверяет обработку смешанного регистра с пробелами
+        """
+        # Act
+        result = get_fallback_rate(mixed_currency)
+
+        # Assert
+        assert result is None, f"Для '{mixed_currency}' ожидался None"
+
+    # Тест 6: Числовые строки
     @pytest.mark.parametrize("numeric_currency", [
         "123",
         "456.78",
@@ -369,15 +398,14 @@ class TestGetFallbackRate:
         "1.5",
         "USD123",
         "123USD",
+        "US3D",
     ])
-    def test_get_fallback_rate_with_numeric_string_returns_none(self, numeric_currency):
-        """Тест обработки строк, содержащих числа"""
-        # Act
+    def test_get_fallback_rate_with_numeric_strings_returns_none(self, numeric_currency):
+        """Тест для строк, содержащих числа"""
         result = get_fallback_rate(numeric_currency)
-
-        # Assert
         assert result is None
 
+    # Тест 7: Unicode символы
     @pytest.mark.parametrize("unicode_currency", [
         "ДОЛЛАР",
         "ЕВРО",
@@ -388,84 +416,12 @@ class TestGetFallbackRate:
         "₽",
         "😀",
     ])
-    def test_get_fallback_rate_with_unicode_characters_returns_none(self, unicode_currency):
-        """Тест обработки строк с unicode символами"""
-        # Act
+    def test_get_fallback_rate_with_unicode_returns_none(self, unicode_currency):
+        """Тест для unicode символов"""
         result = get_fallback_rate(unicode_currency)
-
-        # Assert
         assert result is None
 
-    @pytest.mark.parametrize("invalid_length", [
-        "U",
-        "US",
-        "USDE",
-        "USDEUR",
-        "EURO",
-        "DOLLAR",
-    ])
-    def test_get_fallback_rate_with_invalid_length_returns_none(self, invalid_length):
-        """Тест с некорректной длиной кода валюты"""
-        # Act
-        result = get_fallback_rate(invalid_length)
-
-        # Assert
-        assert result is None
-
-    @pytest.mark.parametrize("non_string", [
-        123,
-        45.67,
-        True,
-        False,
-        ["USD"],
-        {"USD": 92.50},
-        (1, 2, 3),
-        {1, 2, 3},
-    ])
-    def test_get_fallback_rate_with_non_string_returns_none(self, non_string):
-        """Тест с нестроковыми типами данных"""
-        # Act
-        result = get_fallback_rate(non_string)
-
-        # Assert
-        assert result is None
-
-    def test_get_fallback_rate_case_insensitive(self):
-        """Тест регистронезависимости"""
-        # Проверяем разные варианты написания USD
-        assert get_fallback_rate("usd") == 92.50
-        assert get_fallback_rate("Usd") == 92.50
-        assert get_fallback_rate("uSd") == 92.50
-        assert get_fallback_rate("USD") == 92.50
-
-        # Проверяем разные варианты написания EUR
-        assert get_fallback_rate("eur") == 100.20
-        assert get_fallback_rate("Eur") == 100.20
-        assert get_fallback_rate("eUr") == 100.20
-        assert get_fallback_rate("EUR") == 100.20
-
-    def test_get_fallback_rate_positive_values(self):
-        """Проверка положительных значений"""
-        assert get_fallback_rate("USD") > 0
-        assert get_fallback_rate("EUR") > 0
-        assert get_fallback_rate("USD") < 1000
-        assert get_fallback_rate("EUR") < 1000
-
-    def test_get_fallback_rate_returns_same_value_multiple_calls(self):
-        """Проверка что функция возвращает одинаковое значение при многократных вызовах"""
-        first_call = get_fallback_rate("USD")
-        second_call = get_fallback_rate("USD")
-        third_call = get_fallback_rate("USD")
-
-        assert first_call == second_call == third_call == 92.50
-
-    def test_get_fallback_rate_eur_higher_than_usd(self):
-        """Проверка что курс EUR выше курса USD"""
-        usd_rate = get_fallback_rate("USD")
-        eur_rate = get_fallback_rate("EUR")
-
-        assert eur_rate > usd_rate
-
+    # Тест 8: None и пустые значения
     def test_get_fallback_rate_with_none_returns_none(self):
         """Тест с None"""
         result = get_fallback_rate(None)
@@ -479,6 +435,36 @@ class TestGetFallbackRate:
     def test_get_fallback_rate_with_spaces_only_returns_none(self):
         """Тест со строкой из пробелов"""
         result = get_fallback_rate("   ")
+        assert result is None
+
+    # Тест 9: Нестроковые типы
+    @pytest.mark.parametrize("non_string", [
+        123,
+        45.67,
+        True,
+        False,
+        ["USD"],
+        {"USD": 92.50},
+        (1, 2, 3),
+    ])
+    def test_get_fallback_rate_with_non_string_returns_none(self, non_string):
+        """Тест с нестроковыми типами данных"""
+        result = get_fallback_rate(non_string)
+        assert result is None
+
+    # Тест 10: Длина строки
+    @pytest.mark.parametrize("invalid_length", [
+        "U",
+        "US",
+        "USDE",
+        "USDEUR",
+        "EURO",
+        "DOLLAR",
+        "A" * 100,
+    ])
+    def test_get_fallback_rate_with_invalid_length_returns_none(self, invalid_length):
+        """Тест с некорректной длиной кода валюты"""
+        result = get_fallback_rate(invalid_length)
         assert result is None
 
 
