@@ -90,6 +90,10 @@ def get_fallback_rate(currency: str) -> Optional[float]:
     Returns:
         Optional[float]: Курс валюты
     """
+    # Добавить проверку на None и пустые строки
+    if not currency or not isinstance(currency, str):
+        return None
+
     fallback_rates = {
         'USD': 92.50,
         'EUR': 100.20
