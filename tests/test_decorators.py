@@ -7,13 +7,12 @@ and exception handling scenarios.
 import sys
 import os
 import tempfile
-from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from decorators import log
+from src.decorators import log
 
 
 # ============================================================================
@@ -334,7 +333,7 @@ class TestMixedScenarios:
 
     def test_console_logging_works(self, capsys):
         """Test console logging independently."""
-        from decorators import log
+        from src.decorators import log
 
         @log()
         def console_func(x: int) -> int:
@@ -349,7 +348,7 @@ class TestMixedScenarios:
 
     def test_file_logging_works(self, temp_log_file):
         """Test file logging independently."""
-        from decorators import log
+        from src.decorators import log
 
         @log(filename=temp_log_file)
         def file_func(x: int) -> int:

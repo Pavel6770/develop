@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 # Создаём папку logs в корне проекта (если её нет)
 log_dir = Path(__file__).parent.parent / 'logs'
@@ -56,9 +56,7 @@ def load_transactions(file_path: str) -> List[Dict[str, Any]]:
 
         logger.debug(f"Файл {file_path} успешно прочитан, тип данных: {type(data).__name__}")
 
-        # Проверяем, не пустой ли файл (проверка после загрузки)
-        # Файл может быть пустым, но json.load() выбросит исключение
-        # Эта проверка уже не нужна, но оставим для явности
+        # Проверяем, не пустой ли файл
         if not data and isinstance(data, list):
             logger.warning(f"Файл {file_path} содержит пустой список")
             return []
@@ -66,40 +64,30 @@ def load_transactions(file_path: str) -> List[Dict[str, Any]]:
         # Проверяем, является ли загруженные данные списком
         if not isinstance(data, list):
             logger.error(f"Данные в файле {file_path} не являются списком. Тип: {type(data).__name__}")
-            print(f"Ошибка: данные в файле {file_path} не являются списком")
             return []
 
         logger.info(f"Успешно загружено {len(data)} транзакций из файла {file_path}")
-        logger.debug(f"Загруженные данные: {data[:2] if len(data) > 2 else data}")  # Логируем первые 2 элемента
+        logger.debug(f"Загруженные данные: {data[:2] if len(data) > 2 else data}")
 
         return data
 
     except FileNotFoundError:
-        # Явно отлавливаем ошибку отсутствия файла
         logger.error(f"Файл не найден: {file_path}")
-        print(f"Файл не найден: {file_path}")
         return []
 
     except json.JSONDecodeError as e:
-        # Ошибка парсинга JSON (включая случай с пустым файлом)
         logger.error(f"Ошибка парсинга JSON в файле {file_path}: {e}")
-        print(f"Ошибка парсинга JSON в файле {file_path}: {e}")
         return []
 
     except (IOError, OSError) as e:
-        # Ошибки ввода-вывода (нет прав, диск занят и т.д.)
         logger.error(f"Ошибка ввода-вывода при чтении файла {file_path}: {e}")
-        print(f"Ошибка при чтении файла {file_path}: {e}")
         return []
 
     except Exception as e:
-        # Любые другие неожиданные ошибки
         logger.error(f"Неожиданная ошибка при чтении файла {file_path}: {e}", exc_info=True)
-        print(f"Неожиданная ошибка при чтении файла {file_path}: {e}")
         return []
 
 
-# Дополнительная функция для демонстрации (если нужна)
 def get_transactions_count(file_path: str) -> int:
     """
     Возвращает количество транзакций в файле.
@@ -123,7 +111,6 @@ def get_transactions_count(file_path: str) -> int:
     return count
 
 
-# Пример использования для проверки
 if __name__ == "__main__":
     # Успешный случай
     print("=== Успешный случай ===")

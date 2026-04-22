@@ -52,18 +52,27 @@ def get_mask_card_number(card_number):
 
         # Проверяем, что строка состоит только из цифр
         if not card_number_str.isdigit():
-            logger.error(f"Неверный формат номера карты: {card_number} - содержит не цифры")
+            logger.error(
+                f"Неверный формат номера карты: {card_number} - содержит не цифры"
+            )
             return "Неверный номер карты. Номер должен содержать только цифры."
 
         # Проверяем длину номера карты
         if len(card_number_str) != 16:
-            logger.error(f"Неверная длина номера карты: {len(card_number_str)} (ожидается 16)")
+            logger.error(
+                f"Неверная длина номера карты: {len(card_number_str)} (ожидается 16)"
+            )
             return "Неверный номер карты. Должно быть 16 цифр."
 
         # Формируем маску в формате "XXXX XX** **** XXXX"
-        result = f"{card_number_str[:4]} {card_number_str[4:6]}** **** {card_number_str[-4:]}"
+        result = (
+            f"{card_number_str[:4]} {card_number_str[4:6]}** "
+            f"**** {card_number_str[-4:]}"
+        )
 
-        logger.info(f"Успешное маскирование номера карты: входной номер замаскирован в {result}")
+        logger.info(
+            f"Успешное маскирование номера карты: входной номер замаскирован в {result}"
+        )
         logger.debug(f"Результат маскирования карты: {result}")
 
         return result
@@ -90,19 +99,27 @@ def get_mask_account(account_number):
 
         # Проверяем, что строка состоит только из цифр
         if not account_str.isdigit():
-            logger.error(f"Неверный формат номера счета: {account_number} - содержит не цифры")
+            logger.error(
+                f"Неверный формат номера счета: {account_number} - содержит не цифры"
+            )
             return "Неверный номер счета. Номер должен содержать только цифры."
 
         # Если длина номера счета меньше 4, возвращаем его целиком
         if len(account_str) < 4:
-            logger.warning(f"Номер счета слишком короткий: {len(account_str)} цифр (меньше 4)")
-            logger.info(f"Маскирование счета: короткий номер '{account_str}' возвращен без изменений")
+            logger.warning(
+                f"Номер счета слишком короткий: {len(account_str)} цифр (меньше 4)"
+            )
+            logger.info(
+                f"Маскирование счета: короткий номер '{account_str}' возвращен без изменений"
+            )
             return account_str
 
         # Создаем маску в формате "**XXXX" (где XXXX - последние 4 цифры)
         result = f"**{account_str[-4:]}"
 
-        logger.info(f"Успешное маскирование номера счета: входной номер замаскирован в {result}")
+        logger.info(
+            f"Успешное маскирование номера счета: входной номер замаскирован в {result}"
+        )
         logger.debug(f"Результат маскирования счета: {result}")
 
         return result
@@ -120,7 +137,6 @@ if __name__ == "__main__":
     print(get_mask_account(12345678901234567890))
 
     print("\n=== Ошибочные случаи ===")
-    # Ошибочные случаи
     print(get_mask_card_number(12345))
     print(get_mask_card_number("1234abcd5678efgh"))
     print(get_mask_account(123))
