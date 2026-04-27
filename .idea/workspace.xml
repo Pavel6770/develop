@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit" />
+    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
+      <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,6 +47,7 @@
     "Python tests.Python tests for test_main.test_case_insensitive_filter.executor": "Run",
     "Python tests.Python tests for test_main.test_data_types_csv.executor": "Run",
     "Python tests.Python tests for test_main.test_edge_cases_filter.executor": "Run",
+    "Python tests.Python tests for test_main.test_edge_cases_sort.executor": "Run",
     "Python tests.Python tests for test_main.test_empty_file.executor": "Run",
     "Python tests.Python tests for test_main.test_error_cases.executor": "Run",
     "Python tests.Python tests for test_main.test_error_cases_load_csv.executor": "Run",
@@ -53,6 +56,8 @@
     "Python tests.Python tests for test_main.test_load_dict_format.executor": "Run",
     "Python tests.Python tests for test_main.test_load_list_format.executor": "Run",
     "Python tests.Python tests for test_main.test_number_root.executor": "Run",
+    "Python tests.Python tests for test_main.test_sort_ascending.executor": "Run",
+    "Python tests.Python tests for test_main.test_sort_descending.executor": "Run",
     "Python tests.Python tests for test_main.test_successful_load_csv.executor": "Run",
     "Python tests.Python tests for test_transaction_utils.test_case_insensitive.executor": "Run",
     "Python tests.Python tests for test_transaction_utils.test_edge_cases.executor": "Run",
@@ -84,7 +89,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_sort_ascending">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_edge_cases_sort">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -122,7 +127,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_edge_cases_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_edge_cases_sort" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -133,22 +138,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_edge_cases_filter&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_main.test_filter_by_different_statuses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="pythonProject1" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_filter_by_different_statuses&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_edge_cases_sort&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -164,6 +154,21 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_main.test_sort_ascending&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_main.test_sort_descending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_sort_descending&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -204,18 +209,18 @@
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
       <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
-      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
-      <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
+      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_sort" />
       <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
+      <item itemvalue="Python tests.Python tests for test_main.test_sort_descending" />
       <item itemvalue="Python tests.Python tests in test_main.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_sort" />
+        <item itemvalue="Python tests.Python tests for test_main.test_sort_descending" />
         <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
         <item itemvalue="Python tests.Python tests in test_main.py" />
         <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
-        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
-        <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
       </list>
     </recent_temporary>
   </component>
@@ -427,7 +432,23 @@
       <option name="project" value="LOCAL" />
       <updated>1777318455109</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777318588152</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1777318588152</updated>
+    </task>
+    <task id="LOCAL-00026" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777318920955</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1777318920955</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

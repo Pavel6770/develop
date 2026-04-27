@@ -661,3 +661,186 @@ def test_edge_cases_sort():
     # Все даты должны быть корректно распарсены и отсортированы
     assert len(result) == 4
 
+
+def filter_ruble_transactions(
+        transactions: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """
+    Фильтрует только рублевые транзакции.
+    """
+    ruble_keywords = ['руб', 'rub', 'rur', '₽']
+
+    def is_ruble(transaction: Dict[str, Any]) -> bool:
+        currency = transaction.get('currency', {}).get('code', '')
+        if currency:
+            return currency.upper() in ['RUB', 'RUR']
+
+        amount_str = str(transaction.get('amount', ''))
+        description = transaction.get('description', '')
+
+        combined = f"{amount_str} {description}".lower()
+        return any(keyword in combined for keyword in ruble_keywords)
+
+    return [t for t in transactions if is_ruble(t)]
+
+
+# Тест 1: Проверка фильтрации по полю currency
+def test_filter_by_currency_field():
+    """
+    Тест 1: Проверка фильтрации транзакций по полю currency.
+
+    Проверяет, что функция правильно определяет рублёвые транзакции
+    по наличию поля currency с кодом RUB или RUR.
+    """
+    transactions = [
+        {
+            "id": 1,
+            "description": "Покупка в магазине",
+            "amount": 1000,
+            "currency": {"code": "RUB"}
+        },
+        {
+            "id": 2,
+            "description": "Оплата интернета",
+            "amount": 500,
+            "currency": {"code": "USD"}
+        },
+        {
+            "id": 3,
+            "description": "Перевод другу",
+            "amount": 2000,
+            "currency": {"code": "RUR"}
+        },
+        {
+            "id": 4,
+            "description": "Покупка техники",
+            "amount": 15000,
+            "currency": {"code": "EUR"}
+        },
+        {
+            "id": 5,
+            "description": "Снятие наличных",
+            "amount": 3000,
+            "currency": {"code": "RUB"}
+        },
+    ]
+
+    result = filter_ruble_transactions(transactions)
+
+    # Должны остаться только транзакции с RUB и RUR (id: 1, 3, 5)
+    assert len(result) == 3
+    assert result[0]["id"] == 1
+    assert result[1]["id"] == 3
+    assert result[2]["id"] == 5
+
+    # Проверяем, что все транзакции имеют рублёвую валюту
+    for transaction in result:
+        currency_code = transaction.get("currency", {}).get("code", "")
+        assert currency_code.upper() in ["RUB", "RUR"]
+
+
+# Тест 2: Проверка фильтрации по ключевым словам в описании и сумме
+def test_filter_by_keywords():
+    """
+    Тест 2: Проверка фильтрации транзакций по ключевым словам.
+
+    Проверяет, что функция определяет рублёвые транзакции
+    по наличию ключевых слов 'руб', 'rub', 'rur', '₽' в описании или сумме.
+    """
+    transactions = [
+        {
+            "id": 1,
+            "description": "Покупка в магазине",
+            "amount": "1000 руб."
+        },
+        {
+            "id": 2,
+            "description": "Оплата интернета",
+            "amount": "500 USD"
+        },
+        {
+            "id": 3,
+            "description": "Перевод другу",
+            "amount": "2000 rub"
+        },
+        {
+            "id": 4,
+            "description": "Покупка техники",
+            "amount": "15000 EUR"
+        },
+        {
+            "id": 5,
+            "description": "Снятие наличных",
+            "amount": "3000 rur"
+        },
+        {
+            "id": 6,
+            "description": "Оплата кофе",
+            "amount": "150 ₽"
+        },
+        {
+            "id": 7,
+            "description": "Пополнение счета",
+            "amount": 5000  # без указания валюты
+        },
+    ]
+
+    result = filter_ruble_transactions(transactions)
+
+    # Должны остаться транзакции с ключевыми словами (id: 1, 3, 5, 6)
+    assert len(result) == 4
+    result_ids = [t["id"] for t in result]
+    assert 1 in result_ids
+    assert 3 in result_ids
+    assert 5 in result_ids
+    assert 6 in result_ids
+
+    # Проверяем, что транзакции с другой валютой не попали
+    assert 2 not in result_ids
+    assert 4 not in result_ids
+
+
+# Дополнительный тест: Проверка приоритета поля currency над ключевыми словами
+def test_currency_priority():
+    """
+    Дополнительный тест: Проверка, что поле currency имеет приоритет.
+
+    Если указано поле currency, то решение принимается на его основе,
+    даже если в описании есть ключевые слова другой валюты.
+    """
+    transactions = [
+        {
+            "id": 1,
+            "description": "Покупка 100 руб",
+            "amount": 100,
+            "currency": {"code": "USD"}  # USD, но в описании 'руб'
+        },
+        {
+            "id": 2,
+            "description": "Оплата 50 USD",
+            "amount": 50,
+            "currency": {"code": "RUB"}  # RUB, но в описании 'USD'
+        },
+        {
+            "id": 3,
+            "description": "Перевод",
+            "amount": 200,
+            "currency": {"code": "EUR"}
+        },
+    ]
+
+    result = filter_ruble_transactions(transactions)
+
+    # Должна быть найдена только транзакция с currency RUB (id: 2)
+    assert len(result) == 1
+    assert result[0]["id"] == 2
+    assert result[0]["currency"]["code"] == "RUB"
+
+
+# Запуск тестов
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])
+
+
+
+
