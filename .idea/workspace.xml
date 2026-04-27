@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit" />
+    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,27 +40,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests for test_analytics_service.test_case_insensitive.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_analytics_service.test_edge_cases.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_analytics_service.test_normal_case.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_case_insensitive.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_edge_cases.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_multiple_keywords.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_no_matches.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_normal_case.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_transaction_utils.test_special_characters.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests in test_analytics_service.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_analytics_service.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/Homework__11.2&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/user/AppData/Local/Programs/Python/Python312/HomeWork_Proect&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests for test_analytics_service.test_case_insensitive.executor": "Run",
+    "Python tests.Python tests for test_analytics_service.test_edge_cases.executor": "Run",
+    "Python tests.Python tests for test_analytics_service.test_normal_case.executor": "Run",
+    "Python tests.Python tests for test_main.test_empty_file.executor": "Run",
+    "Python tests.Python tests for test_main.test_error_cases.executor": "Run",
+    "Python tests.Python tests for test_main.test_load_dict_format.executor": "Run",
+    "Python tests.Python tests for test_main.test_load_list_format.executor": "Run",
+    "Python tests.Python tests for test_main.test_number_root.executor": "Run",
+    "Python tests.Python tests for test_main.test_successful_load_csv.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_case_insensitive.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_edge_cases.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_multiple_keywords.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_no_matches.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_normal_case.executor": "Run",
+    "Python tests.Python tests for test_transaction_utils.test_special_characters.executor": "Run",
+    "Python tests.Python tests in test_analytics_service.py.executor": "Run",
+    "Python tests.Python tests in test_main.py.executor": "Run",
+    "Python tests.Python tests in test_transaction_utils.py.executor": "Run",
+    "Python tests.Tests Analytics.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.test_analytics_service.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature/Homework__11.2",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/user/AppData/Local/Programs/Python/Python312/HomeWork_Proect",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\JetBrains\Python_Proects\pythonProject1\src" />
@@ -69,7 +81,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_transaction_utils.test_edge_cases">
+  <component name="RunManager" selected="Python tests.Python tests in test_main.py">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -92,7 +104,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_transaction_utils.test_case_insensitive" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_empty_file" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -103,11 +115,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_transaction_utils.test_case_insensitive&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_empty_file&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_transaction_utils.test_edge_cases" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_error_cases" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,11 +130,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_transaction_utils.test_edge_cases&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_error_cases&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_transaction_utils.test_no_matches" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_load_list_format" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -133,11 +145,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_transaction_utils.test_no_matches&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_load_list_format&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_transaction_utils.test_normal_case" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_number_root" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -148,11 +160,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_transaction_utils.test_normal_case&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_number_root&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_transaction_utils.test_special_characters" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_main.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,8 +175,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_transaction_utils.test_special_characters&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_main.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="Tests Analytics" type="tests" factoryName="py.test">
@@ -188,19 +200,19 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
-      <item itemvalue="Python tests.Python tests for test_transaction_utils.test_case_insensitive" />
-      <item itemvalue="Python tests.Python tests for test_transaction_utils.test_edge_cases" />
-      <item itemvalue="Python tests.Python tests for test_transaction_utils.test_no_matches" />
-      <item itemvalue="Python tests.Python tests for test_transaction_utils.test_normal_case" />
-      <item itemvalue="Python tests.Python tests for test_transaction_utils.test_special_characters" />
+      <item itemvalue="Python tests.Python tests for test_main.test_empty_file" />
+      <item itemvalue="Python tests.Python tests for test_main.test_error_cases" />
+      <item itemvalue="Python tests.Python tests for test_main.test_load_list_format" />
+      <item itemvalue="Python tests.Python tests for test_main.test_number_root" />
+      <item itemvalue="Python tests.Python tests in test_main.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_transaction_utils.test_edge_cases" />
-        <item itemvalue="Python tests.Python tests for test_transaction_utils.test_case_insensitive" />
-        <item itemvalue="Python tests.Python tests for test_transaction_utils.test_normal_case" />
-        <item itemvalue="Python tests.Python tests for test_transaction_utils.test_no_matches" />
-        <item itemvalue="Python tests.Python tests for test_transaction_utils.test_special_characters" />
+        <item itemvalue="Python tests.Python tests in test_main.py" />
+        <item itemvalue="Python tests.Python tests for test_main.test_load_list_format" />
+        <item itemvalue="Python tests.Python tests for test_main.test_empty_file" />
+        <item itemvalue="Python tests.Python tests for test_main.test_number_root" />
+        <item itemvalue="Python tests.Python tests for test_main.test_error_cases" />
       </list>
     </recent_temporary>
   </component>
@@ -380,7 +392,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777315528910</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777315744519</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1777315744519</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
