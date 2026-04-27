@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,11 +61,18 @@
     "Python tests.Python tests for test_main.test_format_with_accounts_and_rubles.executor": "Run",
     "Python tests.Python tests for test_main.test_format_with_cards_and_currency_field.executor": "Run",
     "Python tests.Python tests for test_main.test_integration_csv.executor": "Run",
+    "Python tests.Python tests for test_main.test_invalid_inputs_then_valid.executor": "Run",
     "Python tests.Python tests for test_main.test_invalid_then_valid_status.executor": "Run",
     "Python tests.Python tests for test_main.test_load_dict_format.executor": "Run",
     "Python tests.Python tests for test_main.test_load_list_format.executor": "Run",
+    "Python tests.Python tests for test_main.test_main_empty_filter_result.executor": "Run",
+    "Python tests.Python tests for test_main.test_main_file_load_error.executor": "Run",
+    "Python tests.Python tests for test_main.test_main_successful_json_flow.executor": "Run",
     "Python tests.Python tests for test_main.test_multiple_invalid_inputs.executor": "Run",
+    "Python tests.Python tests for test_main.test_negative_responses.executor": "Run",
     "Python tests.Python tests for test_main.test_number_root.executor": "Run",
+    "Python tests.Python tests for test_main.test_positive_responses.executor": "Run",
+    "Python tests.Python tests for test_main.test_prompt_display.executor": "Run",
     "Python tests.Python tests for test_main.test_regex_escaping.executor": "Run",
     "Python tests.Python tests for test_main.test_sort_ascending.executor": "Run",
     "Python tests.Python tests for test_main.test_sort_descending.executor": "Run",
@@ -105,7 +110,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_invalid_inputs_then_valid">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_main_file_load_error">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -128,21 +133,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_empty_and_whitespace_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="pythonProject1" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_empty_and_whitespace_inputs&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_main.test_invalid_inputs_then_valid" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -158,7 +148,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_negative_responses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_main_empty_filter_result" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,11 +159,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_negative_responses&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_main_empty_filter_result&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_positive_responses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_main_file_load_error" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -184,7 +174,22 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_positive_responses&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_main_file_load_error&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_main.test_main_successful_json_flow" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_main_successful_json_flow&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -224,19 +229,19 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
-      <item itemvalue="Python tests.Python tests for test_main.test_empty_and_whitespace_inputs" />
       <item itemvalue="Python tests.Python tests for test_main.test_invalid_inputs_then_valid" />
-      <item itemvalue="Python tests.Python tests for test_main.test_negative_responses" />
-      <item itemvalue="Python tests.Python tests for test_main.test_positive_responses" />
+      <item itemvalue="Python tests.Python tests for test_main.test_main_empty_filter_result" />
+      <item itemvalue="Python tests.Python tests for test_main.test_main_file_load_error" />
+      <item itemvalue="Python tests.Python tests for test_main.test_main_successful_json_flow" />
       <item itemvalue="Python tests.Python tests for test_main.test_prompt_display" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_main.test_main_file_load_error" />
+        <item itemvalue="Python tests.Python tests for test_main.test_main_empty_filter_result" />
+        <item itemvalue="Python tests.Python tests for test_main.test_main_successful_json_flow" />
         <item itemvalue="Python tests.Python tests for test_main.test_invalid_inputs_then_valid" />
         <item itemvalue="Python tests.Python tests for test_main.test_prompt_display" />
-        <item itemvalue="Python tests.Python tests for test_main.test_negative_responses" />
-        <item itemvalue="Python tests.Python tests for test_main.test_positive_responses" />
-        <item itemvalue="Python tests.Python tests for test_main.test_empty_and_whitespace_inputs" />
       </list>
     </recent_temporary>
   </component>
@@ -496,7 +501,23 @@
       <option name="project" value="LOCAL" />
       <updated>1777320539586</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777320674672</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1777320674672</updated>
+    </task>
+    <task id="LOCAL-00032" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777320839074</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1777320839074</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
