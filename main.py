@@ -122,14 +122,21 @@ def filter_transactions_by_status(
         transactions: List[Dict[str, Any]],
         status: str
 ) -> List[Dict[str, Any]]:
+    """
+    Фильтрует транзакции по статусу.
+    """
+    if not isinstance(status, str):
+        return []
+
     status_upper = status.upper()
-    return [
-        t for t in transactions
-        if isinstance(t, dict)
-        and 'status' in t
-        and isinstance(t['status'], str)  # <-- ПРОВЕРКА, ЧТО status - СТРОКА
-        and t['status'].upper() == status_upper
-    ]
+    result = []
+    for t in transactions:
+        if isinstance(t, dict):
+            status_value = t.get('status')
+            if isinstance(status_value, str):
+                if status_value.upper() == status_upper:
+                    result.append(t)
+    return result
 
 
 def sort_transactions_by_date(
