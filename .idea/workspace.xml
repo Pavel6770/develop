@@ -99,7 +99,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_format_with_cards_and_currency_field">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_edge_cases_format">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -122,21 +122,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_case_insensitive_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="pythonProject1" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_case_insensitive_filter&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_main.test_edge_cases_filter_by_description" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -149,6 +134,36 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_main.test_edge_cases_filter_by_description&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_main.test_edge_cases_format" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_edge_cases_format&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_main.test_format_with_accounts_and_rubles" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_format_with_accounts_and_rubles&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -182,21 +197,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_successful_filter_by_description" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="pythonProject1" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_successful_filter_by_description&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Tests Analytics" type="tests" factoryName="py.test">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="$PROJECT_DIR$" />
@@ -218,19 +218,19 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
-      <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
       <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter_by_description" />
+      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_format" />
+      <item itemvalue="Python tests.Python tests for test_main.test_format_with_accounts_and_rubles" />
       <item itemvalue="Python tests.Python tests for test_main.test_format_with_cards_and_currency_field" />
       <item itemvalue="Python tests.Python tests for test_main.test_regex_escaping" />
-      <item itemvalue="Python tests.Python tests for test_main.test_successful_filter_by_description" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_format" />
+        <item itemvalue="Python tests.Python tests for test_main.test_format_with_accounts_and_rubles" />
         <item itemvalue="Python tests.Python tests for test_main.test_format_with_cards_and_currency_field" />
         <item itemvalue="Python tests.Python tests for test_main.test_regex_escaping" />
         <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter_by_description" />
-        <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
-        <item itemvalue="Python tests.Python tests for test_main.test_successful_filter_by_description" />
       </list>
     </recent_temporary>
   </component>

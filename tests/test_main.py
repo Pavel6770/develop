@@ -6,6 +6,8 @@ import csv
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import re
+from unittest.mock import patch
+from io import StringIO
 
 from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
 from main import filter_transactions_by_status
@@ -1143,6 +1145,145 @@ def test_format_with_accounts_and_rubles():
     assert lines[0] == "03.06.2018 Перевод со счета на счет"
     assert "Счет **2935 -> Счет **4321" in lines[1]
     assert "Сумма: 8200 руб." in lines[2]
+
+
+def get_valid_status() -> str:
+    """
+    Запрашивает у пользователя статус операции до тех пор,
+    пока не будет введён корректный статус.
+    """
+    valid_statuses = ['EXECUTED', 'CANCELED', 'PENDING']
+
+    while True:
+        print("\nВведите статус, по которому необходимо выполнить фильтрацию.")
+        print("Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING")
+
+        status = input().strip()
+
+        if status.upper() in valid_statuses:
+            print(f"Операции отфильтрованы по статусу \"{status.upper()}\"")
+            return status.upper()
+        else:
+            print(f"Статус операции \"{status}\" недоступен.")
+
+
+# Тест 1: Ввод корректного статуса с первого раза
+def test_valid_status_first_try():
+    """
+    Тест 1: Проверка ввода корректного статуса с первого раза.
+
+    Проверяет, что функция возвращает правильный статус,
+    когда пользователь вводит корректное значение сразу.
+    """
+    with patch('builtins.input', return_value='EXECUTED'):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_valid_status()
+
+            # Проверяем возвращаемое значение
+            assert result == 'EXECUTED'
+
+            # Проверяем вывод сообщения
+            output = mock_stdout.getvalue()
+            assert "Операции отфильтрованы по статусу \"EXECUTED\"" in output
+
+
+# Тест 2: Ввод некорректного статуса, затем корректного
+def test_invalid_then_valid_status():
+    """
+    Тест 2: Проверка ввода некорректного статуса, затем корректного.
+
+    Проверяет, что функция продолжает запрашивать статус,
+    пока пользователь не введёт корректное значение.
+    """
+    # Мокируем последовательные вводы: сначала неверный, потом верный
+    inputs = ['INVALID', 'CANCELED']
+
+    with patch('builtins.input', side_effect=inputs):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_valid_status()
+
+            # Проверяем возвращаемое значение
+            assert result == 'CANCELED'
+
+            # Проверяем вывод сообщения об ошибке
+            output = mock_stdout.getvalue()
+            assert 'Статус операции "INVALID" недоступен.' in output
+            assert "Операции отфильтрованы по статусу \"CANCELED\"" in output
+
+
+# Тест 3: Проверка всех корректных статусов и регистронезависимости
+def test_all_valid_statuses_case_insensitive():
+    """
+    Тест 3: Проверка всех корректных статусов и регистронезависимости.
+
+    Проверяет, что функция принимает статусы EXECUTED, CANCELED, PENDING
+    в любом регистре и возвращает их в верхнем регистре.
+    """
+    test_cases = [
+        ('executed', 'EXECUTED'),
+        ('EXECUTED', 'EXECUTED'),
+        ('ExEcUtEd', 'EXECUTED'),
+        ('canceled', 'CANCELED'),
+        ('CANCELED', 'CANCELED'),
+        ('CaNcElEd', 'CANCELED'),
+        ('pending', 'PENDING'),
+        ('PENDING', 'PENDING'),
+        ('PeNdInG', 'PENDING'),
+    ]
+
+    for user_input, expected_output in test_cases:
+        with patch('builtins.input', return_value=user_input):
+            with patch('sys.stdout', new_callable=StringIO):
+                result = get_valid_status()
+                assert result == expected_output, \
+                    f"Для ввода '{user_input}' ожидалось '{expected_output}', получено '{result}'"
+
+
+# Дополнительный тест: Проверка с пробелами в вводе
+def test_status_with_spaces():
+    """
+    Дополнительный тест: Проверка ввода статуса с пробелами.
+
+    Проверяет, что функция корректно обрабатывает пробелы
+    с помощью метода strip().
+    """
+    with patch('builtins.input', return_value='  EXECUTED  '):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_valid_status()
+
+            assert result == 'EXECUTED'
+            output = mock_stdout.getvalue()
+            assert "Операции отфильтрованы по статусу \"EXECUTED\"" in output
+
+
+# Дополнительный тест: Множественные неверные вводы
+def test_multiple_invalid_inputs():
+    """
+    Дополнительный тест: Проверка нескольких неверных вводов подряд.
+
+    Проверяет, что функция корректно обрабатывает несколько
+    неверных статусов перед вводом правильного.
+    """
+    inputs = ['wrong1', 'wrong2', 'wrong3', 'PENDING']
+
+    with patch('builtins.input', side_effect=inputs):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_valid_status()
+
+            assert result == 'PENDING'
+
+            output = mock_stdout.getvalue()
+            # Проверяем сообщения об ошибках для каждого неверного ввода
+            assert 'Статус операции "wrong1" недоступен.' in output
+            assert 'Статус операции "wrong2" недоступен.' in output
+            assert 'Статус операции "wrong3" недоступен.' in output
+            assert 'Операции отфильтрованы по статусу "PENDING"' in output
+
+
+
+# Запуск тестов
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])
 
 
 
