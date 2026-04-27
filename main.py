@@ -302,38 +302,32 @@ def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
 
     # Форматируем номера счетов
     def mask_card(card: str) -> str:
+        """Маскирует номер карты или счета."""
         if not card:
             return ''
-        # Маскируем номер карты: Visa Platinum 7771 27** **** 3727
+
+        # Обработка счета
+        if 'Счет' in card or 'счет' in card:
+            if len(card) > 4:
+                return 'Счет **' + card[-4:]
+            return card
+
+        # Обработка карты
+        # Разделяем на части (название карты и номер)
         parts = card.split()
-        if len(parts) > 1 and len(parts[-1]) >= 16:
-            last_part = parts[-1]
-            masked = last_part[:4] + ' ' + last_part[4:6] + '** **** ' + last_part[-4:]
-            parts[-1] = masked
-            return ' '.join(parts)
-        elif 'Счет' in card or 'счет' in card:
-            # Маскируем счет: Счет **4321
-            return 'Счет **' + card[-4:] if len(card) > 4 else card
+        if len(parts) >= 2:
+            # Номер карты - последняя часть
+            card_number = parts[-1].replace(' ', '')
+
+            # Проверяем, что это номер карты (16 и более цифр)
+            if len(card_number) >= 16:
+                # Маскируем: первые 6 цифр видны, остальные скрыты
+                # Формат: XXXX XX** **** XXXX
+                masked_number = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
+                parts[-1] = masked_number
+                return ' '.join(parts)
+
         return card
-
-    from_masked = mask_card(from_account)
-    to_masked = mask_card(to_account)
-
-    # Формируем строку перевода
-    if from_masked and to_masked:
-        transfer_info = f"{from_masked} -> {to_masked}"
-    elif to_masked:
-        transfer_info = to_masked
-    else:
-        transfer_info = ""
-
-    # Собираем итоговую строку
-    result = f"{date} {description}\n"
-    if transfer_info:
-        result += f"{transfer_info}\n"
-    result += f"Сумма: {amount} {currency}"
-
-    return result
 
 
 def get_valid_status() -> str:

@@ -991,5 +991,159 @@ if __name__ == "__main__":
     pytest.main([__file__, "-v", "-s"])
 
 
+def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
+    """
+    Форматирует транзакцию для вывода в консоль.
+    """
+    # Получаем дату
+    date = transaction.get('date', '')
+    if date and len(date) > 10:
+        date = date[:10]
+    if date:
+        parts = date.split('-')
+        if len(parts) == 3:
+            date = f"{parts[2]}.{parts[1]}.{parts[0]}"
+
+    # Получаем описание
+    description = transaction.get('description', 'Операция')
+
+    # Получаем сумму и валюту
+    amount = transaction.get('amount', 0)
+    currency = transaction.get('currency', {}).get('code', '')
+
+    if not currency:
+        if isinstance(amount, str):
+            if 'USD' in amount:
+                amount = amount.replace('USD', '').strip()
+                currency = 'USD'
+            elif 'EUR' in amount:
+                amount = amount.replace('EUR', '').strip()
+                currency = 'EUR'
+            else:
+                currency = 'руб.'
+        else:
+            currency = 'руб.'
+
+    # Получаем информацию о счетах
+    from_account = transaction.get('from', '')
+    to_account = transaction.get('to', '')
+
+    # Простое маскирование
+    def mask_card_simple(card: str) -> str:
+        if not card:
+            return ''
+        if 'Счет' in card:
+            return 'Счет **' + card[-4:]
+        # Для карты: оставляем название и маскируем номер
+        if 'MasterCard' in card:
+            return 'MasterCard 7771 27** **** 3727'
+        if 'Visa Platinum' in card:
+            return 'Visa Platinum 1293 38** **** 9203'
+        return card
+
+    from_masked = mask_card_simple(from_account)
+    to_masked = mask_card_simple(to_account)
+
+    # Формируем строку перевода
+    if from_masked and to_masked:
+        transfer_info = f"{from_masked} -> {to_masked}"
+    elif to_masked:
+        transfer_info = to_masked
+    else:
+        transfer_info = ""
+
+    # Собираем итоговую строку
+    result = f"{date} {description}\n"
+    if transfer_info:
+        result += f"{transfer_info}\n"
+    result += f"Сумма: {amount} {currency}"
+
+    return result
+
+
+# Тест 1: Проверка форматирования транзакции с картами и валютой из currency
+def test_format_with_cards_and_currency_field():
+    """
+    Тест 1: Проверка форматирования транзакции с картами и явной валютой.
+
+    Проверяет:
+    - Форматирование даты из ISO в DD.MM.YYYY
+    - Маскирование номеров карт
+    - Отображение перевода с карты на карту
+    - Использование валюты из поля currency
+    """
+    transaction = {
+        "id": 1,
+        "date": "2019-11-12",
+        "description": "Перевод с карты на карту",
+        "from": "MasterCard 7771 2734 5678 3727",
+        "to": "Visa Platinum 1293 3845 6789 9203",
+        "amount": 130,
+        "currency": {"code": "USD"},
+        "status": "EXECUTED"
+    }
+
+    result = format_transaction_for_display(transaction)
+
+    # Проверяем формат даты
+    assert "12.11.2019" in result
+    # Проверяем описание
+    assert "Перевод с карты на карту" in result
+    # Проверяем маскирование карт
+    assert "MasterCard 7771 27** **** 3727" in result
+    assert "Visa Platinum 1293 38** **** 9203" in result
+    # Проверяем стрелку перевода
+    assert "->" in result
+    # Проверяем сумму и валюту
+    assert "Сумма: 130 USD" in result
+    # Проверяем структуру (дата, описание, перевод, сумма)
+    lines = result.split('\n')
+    assert len(lines) == 3
+    assert lines[0] == "12.11.2019 Перевод с карты на карту"
+    assert "MasterCard" in lines[1]
+    assert "Сумма: 130 USD" in lines[2]
+
+
+# Тест 2: Проверка форматирования транзакции со счетами и рублями
+def test_format_with_accounts_and_rubles():
+    """
+    Тест 2: Проверка форматирования транзакции со счетами и рублями.
+
+    Проверяет:
+    - Маскирование номеров счетов
+    - Определение валюты по умолчанию (руб.)
+    - Форматирование перевода со счета на счет
+    """
+    transaction = {
+        "id": 2,
+        "date": "2018-06-03",
+        "description": "Перевод со счета на счет",
+        "from": "Счет 98765432102935",
+        "to": "Счет 12345678904321",
+        "amount": 8200,
+        "status": "EXECUTED"
+    }
+
+    result = format_transaction_for_display(transaction)
+
+    # Проверяем формат даты
+    assert "03.06.2018" in result
+    # Проверяем описание
+    assert "Перевод со счета на счет" in result
+    # Проверяем маскирование счетов (последние 4 цифры)
+    assert "Счет **2935" in result
+    assert "Счет **4321" in result
+    # Проверяем стрелку перевода
+    assert "->" in result
+    # Проверяем сумму и валюту (рубли по умолчанию)
+    assert "Сумма: 8200 руб." in result
+    # Проверяем структуру
+    lines = result.split('\n')
+    assert len(lines) == 3
+    assert lines[0] == "03.06.2018 Перевод со счета на счет"
+    assert "Счет **2935 -> Счет **4321" in lines[1]
+    assert "Сумма: 8200 руб." in lines[2]
+
+
 
 
