@@ -8,6 +8,8 @@ from datetime import datetime
 import re
 from unittest.mock import patch
 from io import StringIO
+from unittest.mock import patch, MagicMock
+
 
 from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
 from main import filter_transactions_by_status
@@ -1428,5 +1430,153 @@ def test_invalid_inputs_then_valid():
             assert output.count("Пожалуйста, введите 'Да' или 'Нет'") == 3
 
 
+# Тест 1: Проверка успешного выполнения полного цикла с JSON файлом
+def test_main_successful_json_flow():
+    """
+    Тест 1: Проверка успешного выполнения полного цикла с JSON файлом.
+
+    Проверяет:
+    - Выбор JSON файла
+    - Загрузка транзакций
+    - Фильтрация по статусу
+    - Сортировка по дате
+    - Вывод результатов
+    """
+    # Мокируем загруженные транзакции
+    mock_transactions = [
+        {
+            "id": 1,
+            "date": "2024-01-15",
+            "description": "Покупка в магазине",
+            "amount": 1000,
+            "status": "EXECUTED",
+            "currency": {"code": "RUB"}
+        },
+        {
+            "id": 2,
+            "date": "2024-01-10",
+            "description": "Оплата интернета",
+            "amount": 500,
+            "status": "EXECUTED",
+            "currency": {"code": "RUB"}
+        },
+        {
+            "id": 3,
+            "date": "2024-01-20",
+            "description": "Перевод другу",
+            "amount": 2000,
+            "status": "PENDING",
+            "currency": {"code": "RUB"}
+        },
+    ]
+
+    # Последовательность ввода пользователя:
+    # 1. Выбор JSON (1)
+    # 2. Путь к файлу
+    # 3. Статус EXECUTED
+    # 4. Сортировать по дате (да)
+    # 5. По возрастанию
+    # 6. Только рублевые (нет)
+    # 7. Фильтр по слову (нет)
+    user_inputs = [
+        '1',  # Выбор JSON
+        'transactions.json',  # Путь к файлу
+        'EXECUTED',  # Статус
+        'да',  # Сортировать по дате
+        'по возрастанию',  # По возрастанию
+        'нет',  # Только рублевые
+        'нет',  # Фильтр по слову
+    ]
+
+    with patch('builtins.input', side_effect=user_inputs):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            with patch('main.load_transactions_from_json', return_value=mock_transactions):
+                with patch('main.get_valid_status', return_value='EXECUTED'):
+                    with patch('main.get_yes_no', side_effect=[True, False, False]):
+                        with patch('main.sort_transactions_by_date',
+                                   return_value=mock_transactions[:2]):
+                            with patch('main.filter_transactions_by_status',
+                                       return_value=mock_transactions[:2]):
+                                with patch('main.filter_ruble_transactions',
+                                           return_value=mock_transactions[:2]):
+                                    with patch('main.filter_by_description',
+                                               return_value=mock_transactions[:2]):
+                                        with patch('main.format_transaction_for_display',
+                                                   return_value="01.01.2024 Тестовая транзакция\nСумма: 1000 руб."):
+                                            # Импортируем main внутри теста
+                                            import main
+                                            main.main()
+
+                                            output = mock_stdout.getvalue()
+
+                                            # Проверяем наличие ключевых сообщений
+                                            assert "Привет! Добро пожаловать" in output
+                                            assert "Для обработки выбран JSON-файл" in output
+                                            assert "Загружено 3 транзакций" in output
+                                            assert "Распечатываю итоговый список транзакций" in output
+
+
+# Тест 2: Проверка обработки пустого результата после фильтрации
+def test_main_empty_filter_result():
+    """
+    Тест 2: Проверка обработки пустого результата после фильтрации.
+
+    Проверяет, что программа выводит сообщение об отсутствии транзакций,
+    если после фильтрации по статусу ничего не найдено.
+    """
+    mock_transactions = [
+        {
+            "id": 1,
+            "date": "2024-01-15",
+            "description": "Покупка",
+            "amount": 1000,
+            "status": "CANCELED",
+            "currency": {"code": "RUB"}
+        },
+    ]
+
+    user_inputs = [
+        '1',  # Выбор JSON
+        'transactions.json',  # Путь к файлу
+        'EXECUTED',  # Статус (которого нет в транзакциях)
+    ]
+
+    with patch('builtins.input', side_effect=user_inputs):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            with patch('main.load_transactions_from_json', return_value=mock_transactions):
+                with patch('main.get_valid_status', return_value='EXECUTED'):
+                    with patch('main.filter_transactions_by_status', return_value=[]):
+                        import main
+                        main.main()
+
+                        output = mock_stdout.getvalue()
+
+                        # Проверяем, что выведено сообщение об отсутствии транзакций
+                        assert "Не найдено ни одной транзакции, подходящей под ваши условия фильтрации" in output
+
+
+# Тест 3: Проверка обработки ошибки загрузки файла
+def test_main_file_load_error():
+    """
+    Тест 3: Проверка обработки ошибки при загрузке файла.
+
+    Проверяет, что программа завершает работу с сообщением об ошибке,
+    если не удалось загрузить транзакции из файла.
+    """
+    user_inputs = [
+        '2',  # Выбор CSV
+        'nonexistent.csv',  # Несуществующий файл
+    ]
+
+    with patch('builtins.input', side_effect=user_inputs):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            with patch('main.load_transactions_from_csv', return_value=[]):
+                import main
+                main.main()
+
+                output = mock_stdout.getvalue()
+
+                # Проверяем, что выведено сообщение об ошибке загрузки
+                assert "Не удалось загрузить транзакции. Программа завершает работу." in output
 
 

@@ -105,7 +105,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_empty_and_whitespace_inputs">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_invalid_inputs_then_valid">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -128,21 +128,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_all_valid_statuses_case_insensitive" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="pythonProject1" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_all_valid_statuses_case_insensitive&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_main.test_empty_and_whitespace_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -158,7 +143,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_invalid_then_valid_status" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_invalid_inputs_then_valid" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,11 +154,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_invalid_then_valid_status&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_invalid_inputs_then_valid&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_multiple_invalid_inputs" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_negative_responses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -184,11 +169,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_multiple_invalid_inputs&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_negative_responses&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_status_with_spaces" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_positive_responses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -199,7 +184,22 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_status_with_spaces&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_positive_responses&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_main.test_prompt_display" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_prompt_display&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -224,19 +224,19 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
-      <item itemvalue="Python tests.Python tests for test_main.test_all_valid_statuses_case_insensitive" />
       <item itemvalue="Python tests.Python tests for test_main.test_empty_and_whitespace_inputs" />
-      <item itemvalue="Python tests.Python tests for test_main.test_invalid_then_valid_status" />
-      <item itemvalue="Python tests.Python tests for test_main.test_multiple_invalid_inputs" />
-      <item itemvalue="Python tests.Python tests for test_main.test_status_with_spaces" />
+      <item itemvalue="Python tests.Python tests for test_main.test_invalid_inputs_then_valid" />
+      <item itemvalue="Python tests.Python tests for test_main.test_negative_responses" />
+      <item itemvalue="Python tests.Python tests for test_main.test_positive_responses" />
+      <item itemvalue="Python tests.Python tests for test_main.test_prompt_display" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_main.test_invalid_inputs_then_valid" />
+        <item itemvalue="Python tests.Python tests for test_main.test_prompt_display" />
+        <item itemvalue="Python tests.Python tests for test_main.test_negative_responses" />
+        <item itemvalue="Python tests.Python tests for test_main.test_positive_responses" />
         <item itemvalue="Python tests.Python tests for test_main.test_empty_and_whitespace_inputs" />
-        <item itemvalue="Python tests.Python tests for test_main.test_multiple_invalid_inputs" />
-        <item itemvalue="Python tests.Python tests for test_main.test_status_with_spaces" />
-        <item itemvalue="Python tests.Python tests for test_main.test_all_valid_statuses_case_insensitive" />
-        <item itemvalue="Python tests.Python tests for test_main.test_invalid_then_valid_status" />
       </list>
     </recent_temporary>
   </component>
