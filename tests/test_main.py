@@ -1286,5 +1286,147 @@ if __name__ == "__main__":
     pytest.main([__file__, "-v", "-s"])
 
 
+def get_yes_no(prompt: str) -> bool:
+    """
+    Запрашивает у пользователя ответ Да/Нет.
+    """
+    while True:
+        answer = input(f"{prompt} Да/Нет\n").strip().lower()
+        if answer in ['да', 'yes', 'y', 'д']:
+            return True
+        elif answer in ['нет', 'no', 'n', 'н']:
+            return False
+        else:
+            print("Пожалуйста, введите 'Да' или 'Нет'")
+
+
+# Тест 1: Проверка всех вариантов положительного ответа
+def test_positive_responses():
+    """
+    Тест 1: Проверка всех вариантов положительного ответа.
+
+    Проверяет, что функция возвращает True для всех вариантов:
+    'да', 'yes', 'y', 'д' в разных регистрах.
+    """
+    positive_responses = [
+        ('да', True),
+        ('ДА', True),
+        ('Да', True),
+        ('дА', True),
+        ('yes', True),
+        ('YES', True),
+        ('Yes', True),
+        ('yEs', True),
+        ('y', True),
+        ('Y', True),
+        ('д', True),
+        ('Д', True),
+    ]
+
+    for user_input, expected in positive_responses:
+        with patch('builtins.input', return_value=user_input):
+            with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+                result = get_yes_no("Подтвердите действие")
+
+                # Проверяем возвращаемое значение
+                assert result == expected, \
+                    f"Для ввода '{user_input}' ожидалось {expected}, получено {result}"
+
+                # Проверяем, что нет сообщения об ошибке
+                output = mock_stdout.getvalue()
+                assert "Пожалуйста, введите 'Да' или 'Нет'" not in output
+
+
+# Тест 2: Проверка всех вариантов отрицательного ответа
+def test_negative_responses():
+    """
+    Тест 2: Проверка всех вариантов отрицательного ответа.
+
+    Проверяет, что функция возвращает False для всех вариантов:
+    'нет', 'no', 'n', 'н' в разных регистрах.
+    """
+    negative_responses = [
+        ('нет', False),
+        ('НЕТ', False),
+        ('Нет', False),
+        ('нЕт', False),
+        ('no', False),
+        ('NO', False),
+        ('No', False),
+        ('nO', False),
+        ('n', False),
+        ('N', False),
+        ('н', False),
+        ('Н', False),
+    ]
+
+    for user_input, expected in negative_responses:
+        with patch('builtins.input', return_value=user_input):
+            with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+                result = get_yes_no("Подтвердите действие")
+
+                # Проверяем возвращаемое значение
+                assert result == expected, \
+                    f"Для ввода '{user_input}' ожидалось {expected}, получено {result}"
+
+                # Проверяем, что нет сообщения об ошибке
+                output = mock_stdout.getvalue()
+                assert "Пожалуйста, введите 'Да' или 'Нет'" not in output
+
+
+# Тест 3: Проверка обработки неверных вводов и пробелов
+def test_invalid_inputs_then_valid():
+    """
+    Тест 3: Проверка обработки неверных вводов, пробелов и последующего корректного ввода.
+
+    Проверяет:
+    - Неверные вводы (должны вызвать сообщение об ошибке)
+    - Пробелы в начале и конце строки (должны обрезаться)
+    - Последующий корректный ввод (должен вернуть правильное значение)
+    """
+
+    # Тест 3.1: Неверный ввод, затем положительный
+    inputs_invalid_then_yes = ['invalid', '   да   ', 'yes']
+
+    with patch('builtins.input', side_effect=inputs_invalid_then_yes):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_yes_no("Продолжить?")
+
+            assert result is True
+
+            output = mock_stdout.getvalue()
+            assert "Пожалуйста, введите 'Да' или 'Нет'" in output
+            # Сообщение об ошибке должно быть только для 'invalid'
+            assert output.count("Пожалуйста, введите 'Да' или 'Нет'") == 1
+
+    # Тест 3.2: Неверные вводы, затем отрицательный
+    inputs_invalid_then_no = ['123', '???', '  нет  ', 'no']
+
+    with patch('builtins.input', side_effect=inputs_invalid_then_no):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_yes_no("Продолжить?")
+
+            assert result is False
+
+            output = mock_stdout.getvalue()
+            assert "Пожалуйста, введите 'Да' или 'Нет'" in output
+            # Сообщение об ошибке должно быть для '123' и '???'
+            assert output.count("Пожалуйста, введите 'Да' или 'Нет'") == 2
+
+    # Тест 3.3: Только пробелы (неверный ввод)
+    inputs_spaces = ['   ', '\t', '  \n  ', 'да']
+
+    with patch('builtins.input', side_effect=inputs_spaces):
+        with patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            result = get_yes_no("Продолжить?")
+
+            assert result is True
+
+            output = mock_stdout.getvalue()
+            # Должны быть сообщения об ошибке для пробелов
+            assert "Пожалуйста, введите 'Да' или 'Нет'" in output
+            assert output.count("Пожалуйста, введите 'Да' или 'Нет'") == 3
+
+
 
 
