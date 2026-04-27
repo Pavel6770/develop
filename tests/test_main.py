@@ -5,8 +5,8 @@ import tempfile
 from typing import List, Dict, Any
 import csv
 
-from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, filter_transactions_by_status, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
-
+from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
+from main import filter_transactions_by_status
 
 def load_transactions_from_json(file_path: str) -> List[Dict[str, Any]]:
     """Загружает транзакции из JSON-файла."""
@@ -455,4 +455,179 @@ if __name__ == "__main__":
     pytest.main([__file__, "-v", "-s"])
 
 
+def filter_transactions_by_status(
+        transactions: List[Dict[str, Any]],
+        status: str
+) -> List[Dict[str, Any]]:
+    """
+    Фильтрует транзакции по статусу.
+    """
+    status_upper = status.upper()
+    return [
+        t for t in transactions
+        if isinstance(t, dict)
+           and 'status' in t
+           and t['status'].upper() == status_upper
+    ]
 
+
+# Тест 1: Проверка фильтрации по различным статусам
+def test_filter_by_different_statuses():
+    """
+    Тест 1: Проверка корректной фильтрации транзакций по различным статусам.
+
+    Проверяет:
+    - Фильтрация по статусу EXECUTED
+    - Фильтрация по статусу CANCELED
+    - Фильтрация по статусу PENDING
+    """
+    # Подготовка тестовых данных
+    transactions = [
+        {"id": 1, "description": "Покупка в магазине", "amount": 100, "status": "EXECUTED"},
+        {"id": 2, "description": "Оплата интернета", "amount": 500, "status": "CANCELED"},
+        {"id": 3, "description": "Перевод другу", "amount": 1000, "status": "PENDING"},
+        {"id": 4, "description": "Оплата телефона", "amount": 300, "status": "EXECUTED"},
+        {"id": 5, "description": "Снятие наличных", "amount": 2000, "status": "CANCELED"},
+    ]
+
+    # Тест для статуса EXECUTED
+    result_executed = filter_transactions_by_status(transactions, "EXECUTED")
+    assert len(result_executed) == 2
+    assert all(t["status"] == "EXECUTED" for t in result_executed)
+    assert result_executed[0]["id"] == 1
+    assert result_executed[1]["id"] == 4
+
+    # Тест для статуса CANCELED
+    result_canceled = filter_transactions_by_status(transactions, "CANCELED")
+    assert len(result_canceled) == 2
+    assert all(t["status"] == "CANCELED" for t in result_canceled)
+    assert result_canceled[0]["id"] == 2
+    assert result_canceled[1]["id"] == 5
+
+    # Тест для статуса PENDING
+    result_pending = filter_transactions_by_status(transactions, "PENDING")
+    assert len(result_pending) == 1
+    assert result_pending[0]["status"] == "PENDING"
+    assert result_pending[0]["id"] == 3
+
+
+# Тест 2: Проверка регистронезависимости
+def test_case_insensitive_filter():
+    """
+    Тест 2: Проверка, что фильтрация не зависит от регистра.
+
+    Проверяет, что статусы 'executed', 'EXECUTED', 'Executed' обрабатываются одинаково.
+    """
+    transactions = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "executed"},
+        {"id": 3, "description": "Перевод", "amount": 300, "status": "Executed"},
+        {"id": 4, "description": "Снятие", "amount": 400, "status": "CANCELED"},
+    ]
+
+    # Фильтрация с разным регистром статуса
+    result_lower = filter_transactions_by_status(transactions, "executed")
+    assert len(result_lower) == 3
+    assert all(t["status"].upper() == "EXECUTED" for t in result_lower)
+
+    result_upper = filter_transactions_by_status(transactions, "EXECUTED")
+    assert len(result_upper) == 3
+
+    result_capitalized = filter_transactions_by_status(transactions, "Executed")
+    assert len(result_capitalized) == 3
+
+    # Проверка, что все три транзакции со статусом EXECUTED найдены
+    result_mixed = filter_transactions_by_status(transactions, "eXeCuTeD")
+    assert len(result_mixed) == 3
+
+    # Проверка, что транзакция со статусом CANCELED не попала в фильтр
+    assert all(t["id"] != 4 for t in result_mixed)
+
+
+# Тест 3: Проверка обработки краевых случаев
+def test_edge_cases_filter():
+    """
+    Тест 3: Проверка обработки краевых случаев.
+
+    Проверяет:
+    - Пустой список транзакций
+    - Отсутствие поля status у транзакции
+    - Некорректные типы данных
+    - Статус, которого нет в транзакциях
+    - Пустая строка в качестве статуса
+    - Поле status = None
+    """
+    # Тест 3.1: Пустой список транзакций
+    result_empty = filter_transactions_by_status([], "EXECUTED")
+    assert result_empty == []
+
+    # Тест 3.2: Отсутствие поля status у транзакции
+    transactions_missing_status = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
+        {"id": 2, "description": "Оплата", "amount": 200},  # Нет поля status
+        {"id": 3, "description": "Перевод", "amount": 300, "status": "EXECUTED"},
+    ]
+
+    result_missing = filter_transactions_by_status(transactions_missing_status, "EXECUTED")
+    assert len(result_missing) == 2
+    assert result_missing[0]["id"] == 1
+    assert result_missing[1]["id"] == 3
+
+    # Тест 3.3: Некорректный тип транзакции (не словарь)
+    transactions_invalid_type = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
+        "invalid transaction",  # Строка вместо словаря
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
+    ]
+
+    result_invalid = filter_transactions_by_status(transactions_invalid_type, "EXECUTED")
+    # Некорректные элементы должны быть пропущены
+    assert len(result_invalid) == 2
+    assert all(isinstance(t, dict) for t in result_invalid)
+
+    # Тест 3.4: Статус, которого нет в транзакциях
+    transactions = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "CANCELED"},
+    ]
+
+    result_not_found = filter_transactions_by_status(transactions, "PENDING")
+    assert result_not_found == []
+
+    # Тест 3.5: Пустая строка в качестве статуса
+    result_empty_status = filter_transactions_by_status(transactions, "")
+    assert result_empty_status == []
+
+    # Тест 3.6: Поле status имеет None значение (исправлено - теперь не падает)
+    transactions_none_status = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": None},
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
+        {"id": 3, "description": "Перевод", "amount": 300, "status": None},
+    ]
+
+    result_none = filter_transactions_by_status(transactions_none_status, "EXECUTED")
+    # Должна быть найдена только вторая транзакция со статусом "EXECUTED"
+    assert len(result_none) == 1
+    assert result_none[0]["id"] == 2
+    assert result_none[0]["status"] == "EXECUTED"
+
+    # Тест 3.7: Поле status имеет числовое значение
+    transactions_numeric_status = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": 123},
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
+    ]
+
+    result_numeric = filter_transactions_by_status(transactions_numeric_status, "EXECUTED")
+    # Числовой статус не должен попасть в фильтр
+    assert len(result_numeric) == 1
+    assert result_numeric[0]["id"] == 2
+
+    # Тест 3.8: Статус в разных регистрах
+    transactions_case = [
+        {"id": 1, "description": "Покупка", "amount": 100, "status": "executed"},
+        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
+        {"id": 3, "description": "Перевод", "amount": 300, "status": "Executed"},
+    ]
+
+    result_case = filter_transactions_by_status(transactions_case, "EXECUTED")
+    assert len(result_case) == 3

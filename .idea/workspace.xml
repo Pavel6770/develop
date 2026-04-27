@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit" />
+    <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,8 +45,14 @@
     "Python tests.Python tests for test_analytics_service.test_case_insensitive.executor": "Run",
     "Python tests.Python tests for test_analytics_service.test_edge_cases.executor": "Run",
     "Python tests.Python tests for test_analytics_service.test_normal_case.executor": "Run",
+    "Python tests.Python tests for test_main.test_case_insensitive_filter.executor": "Run",
+    "Python tests.Python tests for test_main.test_data_types_csv.executor": "Run",
+    "Python tests.Python tests for test_main.test_edge_cases_filter.executor": "Run",
     "Python tests.Python tests for test_main.test_empty_file.executor": "Run",
     "Python tests.Python tests for test_main.test_error_cases.executor": "Run",
+    "Python tests.Python tests for test_main.test_error_cases_load_csv.executor": "Run",
+    "Python tests.Python tests for test_main.test_filter_by_different_statuses.executor": "Run",
+    "Python tests.Python tests for test_main.test_integration_csv.executor": "Run",
     "Python tests.Python tests for test_main.test_load_dict_format.executor": "Run",
     "Python tests.Python tests for test_main.test_load_list_format.executor": "Run",
     "Python tests.Python tests for test_main.test_number_root.executor": "Run",
@@ -78,7 +87,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_main.py">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_edge_cases_filter">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -101,7 +110,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_empty_file" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_case_insensitive_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -112,11 +121,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_empty_file&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_case_insensitive_filter&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_error_cases" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_edge_cases_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,11 +136,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_error_cases&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_edge_cases_filter&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_load_list_format" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_filter_by_different_statuses" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -142,11 +151,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_load_list_format&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_filter_by_different_statuses&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_number_root" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_integration_csv" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,7 +166,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_number_root&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_integration_csv&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -197,19 +206,19 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
-      <item itemvalue="Python tests.Python tests for test_main.test_empty_file" />
-      <item itemvalue="Python tests.Python tests for test_main.test_error_cases" />
-      <item itemvalue="Python tests.Python tests for test_main.test_load_list_format" />
-      <item itemvalue="Python tests.Python tests for test_main.test_number_root" />
+      <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
+      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
+      <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
+      <item itemvalue="Python tests.Python tests for test_main.test_integration_csv" />
       <item itemvalue="Python tests.Python tests in test_main.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
         <item itemvalue="Python tests.Python tests in test_main.py" />
-        <item itemvalue="Python tests.Python tests for test_main.test_load_list_format" />
-        <item itemvalue="Python tests.Python tests for test_main.test_empty_file" />
-        <item itemvalue="Python tests.Python tests for test_main.test_number_root" />
-        <item itemvalue="Python tests.Python tests for test_main.test_error_cases" />
+        <item itemvalue="Python tests.Python tests for test_main.test_integration_csv" />
       </list>
     </recent_temporary>
   </component>
@@ -405,7 +414,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777317274839</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777317898196</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1777317898196</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

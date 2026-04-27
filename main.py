@@ -122,27 +122,13 @@ def filter_transactions_by_status(
         transactions: List[Dict[str, Any]],
         status: str
 ) -> List[Dict[str, Any]]:
-    """
-    Фильтрует транзакции по статусу.
-
-    Parameters
-    ----------
-    transactions : List[Dict[str, Any]]
-        Список транзакций.
-    status : str
-        Статус для фильтрации (EXECUTED, CANCELED, PENDING).
-
-    Returns
-    -------
-    List[Dict[str, Any]]
-        Отфильтрованный список транзакций.
-    """
     status_upper = status.upper()
     return [
         t for t in transactions
         if isinstance(t, dict)
-           and 'status' in t
-           and t['status'].upper() == status_upper
+        and 'status' in t
+        and isinstance(t['status'], str)  # <-- ПРОВЕРКА, ЧТО status - СТРОКА
+        and t['status'].upper() == status_upper
     ]
 
 
