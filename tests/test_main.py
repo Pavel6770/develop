@@ -5,6 +5,7 @@ import tempfile
 import csv
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+import re
 
 from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
 from main import filter_transactions_by_status
@@ -835,6 +836,154 @@ def test_currency_priority():
     assert len(result) == 1
     assert result[0]["id"] == 2
     assert result[0]["currency"]["code"] == "RUB"
+
+
+# Запуск тестов
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "-s"])
+
+
+def filter_by_description(
+        transactions: List[Dict[str, Any]],
+        search_string: str
+) -> List[Dict[str, Any]]:
+    """
+    Фильтрует транзакции по строке в описании.
+    """
+    if not search_string:
+        return transactions
+
+    pattern = re.compile(re.escape(search_string), re.IGNORECASE)
+
+    return [
+        t for t in transactions
+        if isinstance(t, dict)
+           and 'description' in t
+           and isinstance(t['description'], str)
+           and pattern.search(t['description'])
+    ]
+
+
+# Тест 1: Проверка успешной фильтрации по строке поиска
+def test_successful_filter_by_description():
+    """
+    Тест 1: Проверка успешной фильтрации транзакций по строке в описании.
+    """
+    transactions = [
+        {"id": 1, "description": "Покупка в магазине", "amount": 100},
+        {"id": 2, "description": "Оплата интернета", "amount": 200},
+        {"id": 3, "description": "Покупка продуктов", "amount": 300},
+        {"id": 4, "description": "Перевод другу", "amount": 400},
+        {"id": 5, "description": "Возврат покупки", "amount": 500},
+    ]
+
+    # Поиск по слову "Покупка"
+    result = filter_by_description(transactions, "Покупка")
+    assert len(result) == 2
+    assert result[0]["id"] == 1
+    assert result[1]["id"] == 3
+
+    # Поиск по части слова "интер"
+    result_partial = filter_by_description(transactions, "интер")
+    assert len(result_partial) == 1
+    assert result_partial[0]["id"] == 2
+
+    # Поиск по слову "магазин"
+    result_shop = filter_by_description(transactions, "магазин")
+    assert len(result_shop) == 1
+    assert result_shop[0]["id"] == 1
+
+    # Поиск по слову "продуктов" (родительный падеж)
+    result_products = filter_by_description(transactions, "продуктов")
+    assert len(result_products) == 1
+    assert result_products[0]["id"] == 3
+
+    # Поиск по слову "покупки" (родительный падеж)
+    result_purchase = filter_by_description(transactions, "покупки")
+    assert len(result_purchase) == 1
+    assert result_purchase[0]["id"] == 5
+
+
+# Тест 2: Проверка игнорирования регистра
+def test_case_insensitive_filter():
+    """
+    Тест 2: Проверка, что фильтрация не зависит от регистра символов.
+    """
+    transactions = [
+        {"id": 1, "description": "Покупка в магазине", "amount": 100},
+        {"id": 2, "description": "ОПЛАТА ИНТЕРНЕТА", "amount": 200},
+        {"id": 3, "description": "покупка продуктов", "amount": 300},
+        {"id": 4, "description": "Перевод Другу", "amount": 400},
+        {"id": 5, "description": "Возврат Покупки", "amount": 500},
+    ]
+
+    # Поиск по слову "покупка" (находит id 1 и 3)
+    result_lower = filter_by_description(transactions, "покупка")
+    assert len(result_lower) == 2
+    assert result_lower[0]["id"] == 1
+    assert result_lower[1]["id"] == 3
+
+    # Поиск в верхнем регистре
+    result_upper = filter_by_description(transactions, "ПОКУПКА")
+    assert len(result_upper) == 2
+
+    # Поиск в смешанном регистре
+    result_mixed = filter_by_description(transactions, "ПоКуПкА")
+    assert len(result_mixed) == 2
+
+    # Проверка регистронезависимости
+    ids_lower = {t["id"] for t in result_lower}
+    ids_upper = {t["id"] for t in result_upper}
+    ids_mixed = {t["id"] for t in result_mixed}
+    assert ids_lower == ids_upper == ids_mixed == {1, 3}
+
+    # Поиск по слову "оплата"
+    result_pay = filter_by_description(transactions, "оплата")
+    assert len(result_pay) == 1
+    assert result_pay[0]["id"] == 2
+
+    # Поиск по слову "ОПЛАТА" (верхний регистр)
+    result_pay_upper = filter_by_description(transactions, "ОПЛАТА")
+    assert len(result_pay_upper) == 1
+    assert result_pay_upper[0]["id"] == 2
+
+    # Поиск по слову "покупки" (находит id 5)
+    result_purchase = filter_by_description(transactions, "покупки")
+    assert len(result_purchase) == 1
+    assert result_purchase[0]["id"] == 5
+
+
+
+# Дополнительный тест: Проверка экранирования специальных символов
+def test_regex_escaping():
+    """
+    Дополнительный тест: Проверка, что специальные символы экранируются.
+
+    Функция использует re.escape(), поэтому специальные символы
+    должны искаться как обычные символы.
+    """
+    transactions = [
+        {"id": 1, "description": "Точка. в описании", "amount": 100},
+        {"id": 2, "description": "Скобки (круглые)", "amount": 200},
+        {"id": 3, "description": "Плюс + знак", "amount": 300},
+        {"id": 4, "description": "Звездочка * символ", "amount": 400},
+        {"id": 5, "description": "Вопрос? Знак", "amount": 500},
+    ]
+
+    # Поиск с точкой
+    result_dot = filter_by_description(transactions, "Точка.")
+    assert len(result_dot) == 1
+    assert result_dot[0]["id"] == 1
+
+    # Поиск со скобками
+    result_brackets = filter_by_description(transactions, "(круглые)")
+    assert len(result_brackets) == 1
+    assert result_brackets[0]["id"] == 2
+
+    # Поиск с плюсом
+    result_plus = filter_by_description(transactions, "+ знак")
+    assert len(result_plus) == 1
+    assert result_plus[0]["id"] == 3
 
 
 # Запуск тестов

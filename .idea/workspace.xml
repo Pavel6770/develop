@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="671c1639-d3f4-4656-868f-9f407e7f38bb" name="Changes" comment="init commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,19 +46,24 @@
     "Python tests.Python tests for test_analytics_service.test_edge_cases.executor": "Run",
     "Python tests.Python tests for test_analytics_service.test_normal_case.executor": "Run",
     "Python tests.Python tests for test_main.test_case_insensitive_filter.executor": "Run",
+    "Python tests.Python tests for test_main.test_currency_priority.executor": "Run",
     "Python tests.Python tests for test_main.test_data_types_csv.executor": "Run",
     "Python tests.Python tests for test_main.test_edge_cases_filter.executor": "Run",
+    "Python tests.Python tests for test_main.test_edge_cases_ruble_filter.executor": "Run",
     "Python tests.Python tests for test_main.test_edge_cases_sort.executor": "Run",
     "Python tests.Python tests for test_main.test_empty_file.executor": "Run",
     "Python tests.Python tests for test_main.test_error_cases.executor": "Run",
     "Python tests.Python tests for test_main.test_error_cases_load_csv.executor": "Run",
+    "Python tests.Python tests for test_main.test_filter_by_currency_field.executor": "Run",
     "Python tests.Python tests for test_main.test_filter_by_different_statuses.executor": "Run",
+    "Python tests.Python tests for test_main.test_filter_by_keywords.executor": "Run",
     "Python tests.Python tests for test_main.test_integration_csv.executor": "Run",
     "Python tests.Python tests for test_main.test_load_dict_format.executor": "Run",
     "Python tests.Python tests for test_main.test_load_list_format.executor": "Run",
     "Python tests.Python tests for test_main.test_number_root.executor": "Run",
     "Python tests.Python tests for test_main.test_sort_ascending.executor": "Run",
     "Python tests.Python tests for test_main.test_sort_descending.executor": "Run",
+    "Python tests.Python tests for test_main.test_successful_filter_by_description.executor": "Run",
     "Python tests.Python tests for test_main.test_successful_load_csv.executor": "Run",
     "Python tests.Python tests for test_transaction_utils.test_case_insensitive.executor": "Run",
     "Python tests.Python tests for test_transaction_utils.test_edge_cases.executor": "Run",
@@ -89,7 +95,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_edge_cases_sort">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_case_insensitive_filter">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -127,7 +133,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_edge_cases_sort" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_currency_priority" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -138,11 +144,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_edge_cases_sort&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_currency_priority&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_sort_ascending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_edge_cases_ruble_filter" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -153,11 +159,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_sort_ascending&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_edge_cases_ruble_filter&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_sort_descending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_filter_by_keywords" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -168,11 +174,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_sort_descending&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_filter_by_keywords&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_main.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_successful_filter_by_description" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -183,8 +189,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_main.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_successful_filter_by_description&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="Tests Analytics" type="tests" factoryName="py.test">
@@ -209,18 +215,18 @@
       <item itemvalue="Python.main" />
       <item itemvalue="Python tests.Tests Analytics" />
       <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
-      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_sort" />
-      <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
-      <item itemvalue="Python tests.Python tests for test_main.test_sort_descending" />
-      <item itemvalue="Python tests.Python tests in test_main.py" />
+      <item itemvalue="Python tests.Python tests for test_main.test_currency_priority" />
+      <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_ruble_filter" />
+      <item itemvalue="Python tests.Python tests for test_main.test_filter_by_keywords" />
+      <item itemvalue="Python tests.Python tests for test_main.test_successful_filter_by_description" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_sort" />
-        <item itemvalue="Python tests.Python tests for test_main.test_sort_descending" />
-        <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
-        <item itemvalue="Python tests.Python tests in test_main.py" />
         <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_successful_filter_by_description" />
+        <item itemvalue="Python tests.Python tests for test_main.test_currency_priority" />
+        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_ruble_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_filter_by_keywords" />
       </list>
     </recent_temporary>
   </component>
@@ -448,7 +454,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777318920955</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="init commit">
+      <option name="closed" value="true" />
+      <created>1777319244763</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1777319244763</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
