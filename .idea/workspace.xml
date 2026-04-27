@@ -84,7 +84,7 @@
       <recent name="C:\Users\user\AppData\Local\Programs\Python\Python312\HomeWork_Proect\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_main.test_edge_cases_filter">
+  <component name="RunManager" selected="Python tests.Python tests for test_main.test_sort_ascending">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -152,7 +152,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_main.test_integration_csv" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_main.test_sort_ascending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,7 +163,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_main.test_integration_csv&quot;" />
+      <option name="_new_target" value="&quot;test_main.test_sort_ascending&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -206,16 +206,16 @@
       <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
       <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
       <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
-      <item itemvalue="Python tests.Python tests for test_main.test_integration_csv" />
+      <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
       <item itemvalue="Python tests.Python tests in test_main.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
-        <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
-        <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
+        <item itemvalue="Python tests.Python tests for test_main.test_sort_ascending" />
         <item itemvalue="Python tests.Python tests in test_main.py" />
-        <item itemvalue="Python tests.Python tests for test_main.test_integration_csv" />
+        <item itemvalue="Python tests.Python tests for test_main.test_case_insensitive_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_edge_cases_filter" />
+        <item itemvalue="Python tests.Python tests for test_main.test_filter_by_different_statuses" />
       </list>
     </recent_temporary>
   </component>

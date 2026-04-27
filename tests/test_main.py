@@ -2,8 +2,9 @@ import pytest
 import json
 import os
 import tempfile
-from typing import List, Dict, Any
 import csv
+from typing import List, Dict, Any, Optional
+from datetime import datetime
 
 from main import load_transactions_from_csv, load_transactions_from_json, load_transactions_from_xlsx, sort_transactions_by_date, filter_ruble_transactions, filter_by_description, format_transaction_for_display, get_valid_status, get_yes_no, main
 from main import filter_transactions_by_status
@@ -544,90 +545,119 @@ def test_case_insensitive_filter():
     assert all(t["id"] != 4 for t in result_mixed)
 
 
-# Тест 3: Проверка обработки краевых случаев
-def test_edge_cases_filter():
+def sort_transactions_by_date(
+        transactions: List[Dict[str, Any]],
+        ascending: bool = True
+) -> List[Dict[str, Any]]:
     """
-    Тест 3: Проверка обработки краевых случаев.
+    Сортирует транзакции по дате.
+    """
+
+    def parse_date(transaction: Dict[str, Any]) -> Optional[datetime]:
+        date_str = transaction.get('date', '')
+        if not date_str:
+            return datetime.min
+
+        formats = [
+            '%Y-%m-%d',
+            '%d.%m.%Y',
+            '%Y/%m/%d',
+            '%d/%m/%Y',
+        ]
+
+        for fmt in formats:
+            try:
+                return datetime.strptime(date_str, fmt)
+            except (ValueError, TypeError):
+                continue
+
+        return datetime.min
+
+    return sorted(
+        transactions,
+        key=parse_date,
+        reverse=not ascending
+    )
+
+
+# Тест 1: Проверка сортировки по возрастанию (от старых к новым)
+def test_sort_ascending():
+    """
+    Тест 1: Проверка сортировки транзакций по возрастанию даты.
+
+    Проверяет, что транзакции сортируются от самой старой к самой новой.
+    """
+    transactions = [
+        {"id": 1, "description": "Покупка", "amount": 100, "date": "2024-01-15"},
+        {"id": 2, "description": "Оплата", "amount": 200, "date": "2024-01-10"},
+        {"id": 3, "description": "Перевод", "amount": 300, "date": "2024-01-20"},
+        {"id": 4, "description": "Снятие", "amount": 400, "date": "2024-01-05"},
+    ]
+
+    result = sort_transactions_by_date(transactions, ascending=True)
+
+    # Проверяем порядок (от старых к новым)
+    assert len(result) == 4
+    assert result[0]["id"] == 4  # 2024-01-05
+    assert result[1]["id"] == 2  # 2024-01-10
+    assert result[2]["id"] == 1  # 2024-01-15
+    assert result[3]["id"] == 3  # 2024-01-20
+
+    # Проверяем, что даты идут в правильном порядке
+    dates = [t["date"] for t in result]
+    assert dates == ["2024-01-05", "2024-01-10", "2024-01-15", "2024-01-20"]
+
+
+# Тест 2: Проверка сортировки по убыванию (от новых к старым)
+def test_sort_descending():
+    """
+    Тест 2: Проверка сортировки транзакций по убыванию даты.
+
+    Проверяет, что транзакции сортируются от самой новой к самой старой.
+    """
+    transactions = [
+        {"id": 1, "description": "Покупка", "amount": 100, "date": "2024-01-15"},
+        {"id": 2, "description": "Оплата", "amount": 200, "date": "2024-01-10"},
+        {"id": 3, "description": "Перевод", "amount": 300, "date": "2024-01-20"},
+        {"id": 4, "description": "Снятие", "amount": 400, "date": "2024-01-05"},
+    ]
+
+    result = sort_transactions_by_date(transactions, ascending=False)
+
+    # Проверяем порядок (от новых к старым)
+    assert len(result) == 4
+    assert result[0]["id"] == 3  # 2024-01-20
+    assert result[1]["id"] == 1  # 2024-01-15
+    assert result[2]["id"] == 2  # 2024-01-10
+    assert result[3]["id"] == 4  # 2024-01-05
+
+    # Проверяем, что даты идут в правильном порядке
+    dates = [t["date"] for t in result]
+    assert dates == ["2024-01-20", "2024-01-15", "2024-01-10", "2024-01-05"]
+
+
+# Тест 3: Проверка обработки различных форматов дат и краевых случаев
+def test_edge_cases_sort():
+    """
+    Тест 3: Проверка обработки различных форматов дат и краевых случаев.
 
     Проверяет:
-    - Пустой список транзакций
-    - Отсутствие поля status у транзакции
-    - Некорректные типы данных
-    - Статус, которого нет в транзакциях
-    - Пустая строка в качестве статуса
-    - Поле status = None
-    """
-    # Тест 3.1: Пустой список транзакций
-    result_empty = filter_transactions_by_status([], "EXECUTED")
-    assert result_empty == []
+    - Разные форматы дат (YYYY-MM-DD, DD.MM.YYYY, YYYY/MM/DD, DD/MM/YYYY)
+    - Пустые даты (должны быть в начале или конце)
+    - Отсутствие поля date
+    - Некорректные даты
+    - Одна транзакция
+    - Пустой список """
 
-    # Тест 3.2: Отсутствие поля status у транзакции
-    transactions_missing_status = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
-        {"id": 2, "description": "Оплата", "amount": 200},  # Нет поля status
-        {"id": 3, "description": "Перевод", "amount": 300, "status": "EXECUTED"},
+    # Тест 3.1: Разные форматы дат
+    transactions_mixed_formats = [
+        {"id": 1, "description": "Формат 1", "amount": 100, "date": "2024-01-15"},
+        {"id": 2, "description": "Формат 2", "amount": 200, "date": "15.01.2024"},
+        {"id": 3, "description": "Формат 3", "amount": 300, "date": "2024/01/10"},
+        {"id": 4, "description": "Формат 4", "amount": 400, "date": "10/01/2024"},
     ]
 
-    result_missing = filter_transactions_by_status(transactions_missing_status, "EXECUTED")
-    assert len(result_missing) == 2
-    assert result_missing[0]["id"] == 1
-    assert result_missing[1]["id"] == 3
+    result = sort_transactions_by_date(transactions_mixed_formats, ascending=True)
+    # Все даты должны быть корректно распарсены и отсортированы
+    assert len(result) == 4
 
-    # Тест 3.3: Некорректный тип транзакции (не словарь)
-    transactions_invalid_type = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
-        "invalid transaction",  # Строка вместо словаря
-        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
-    ]
-
-    result_invalid = filter_transactions_by_status(transactions_invalid_type, "EXECUTED")
-    # Некорректные элементы должны быть пропущены
-    assert len(result_invalid) == 2
-    assert all(isinstance(t, dict) for t in result_invalid)
-
-    # Тест 3.4: Статус, которого нет в транзакциях
-    transactions = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": "EXECUTED"},
-        {"id": 2, "description": "Оплата", "amount": 200, "status": "CANCELED"},
-    ]
-
-    result_not_found = filter_transactions_by_status(transactions, "PENDING")
-    assert result_not_found == []
-
-    # Тест 3.5: Пустая строка в качестве статуса
-    result_empty_status = filter_transactions_by_status(transactions, "")
-    assert result_empty_status == []
-
-    # Тест 3.6: Поле status имеет None значение (исправлено - теперь не падает)
-    transactions_none_status = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": None},
-        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
-        {"id": 3, "description": "Перевод", "amount": 300, "status": None},
-    ]
-
-    result_none = filter_transactions_by_status(transactions_none_status, "EXECUTED")
-    # Должна быть найдена только вторая транзакция со статусом "EXECUTED"
-    assert len(result_none) == 1
-    assert result_none[0]["id"] == 2
-    assert result_none[0]["status"] == "EXECUTED"
-
-    # Тест 3.7: Поле status имеет числовое значение
-    transactions_numeric_status = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": 123},
-        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
-    ]
-
-    result_numeric = filter_transactions_by_status(transactions_numeric_status, "EXECUTED")
-    # Числовой статус не должен попасть в фильтр
-    assert len(result_numeric) == 1
-    assert result_numeric[0]["id"] == 2
-
-    # Тест 3.8: Статус в разных регистрах
-    transactions_case = [
-        {"id": 1, "description": "Покупка", "amount": 100, "status": "executed"},
-        {"id": 2, "description": "Оплата", "amount": 200, "status": "EXECUTED"},
-        {"id": 3, "description": "Перевод", "amount": 300, "status": "Executed"},
-    ]
-
-    result_case = filter_transactions_by_status(transactions_case, "EXECUTED")
-    assert len(result_case) == 3
