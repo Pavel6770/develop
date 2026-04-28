@@ -154,39 +154,67 @@ def filter_by_description(
 def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
     """Форматирует транзакцию для вывода в консоль."""
     # Форматируем дату
-    date = transaction.get('date', '')
+    date = transaction.get("date", "")
     if date and len(date) > 10:
         date = date[:10]
-    if date and '-' in date:
-        parts = date.split('-')
+    if date and "-" in date:
+        parts = date.split("-")
         if len(parts) == 3:
             date = f"{parts[2]}.{parts[1]}.{parts[0]}"
 
-    description = transaction.get('description', 'Операция')
-    amount = transaction.get('amount', 0)
+    description = transaction.get("description", "Операция")
 
-    # Валюта
-    currency = transaction.get('currency', {}).get('code', '')
-    if not currency:
-        currency = 'руб.'
+    # Получаем сумму и валюту
+    operation_amount = transaction.get("operationAmount", {})
+    amount = operation_amount.get("amount", 0)
+    currency_info = operation_amount.get("currency", {})
+    currency = currency_info.get("name", currency_info.get("code", "руб."))
 
-    # Маскировка карт/счетов
-    from_account = transaction.get('from', '')
-    to_account = transaction.get('to', '')
+    if isinstance(amount, str):
+        try:
+            amount = float(amount)
+        except ValueError:
+            pass
 
+    from_account = transaction.get("from", "")
+    to_account = transaction.get("to", "")
+
+    # Правильная маскировка карт и счетов
     def mask_card(card: str) -> str:
         if not card:
-            return ''
-        if 'Счет' in card:
-            return 'Счет **' + card[-4:] if len(card) > 4 else card
-        if 'Maestro' in card or 'MasterCard' in card or 'Visa' in card or 'МИР' in card:
-            return card[:12] + ' **** ' + card[-4:] if len(card) > 16 else card
-        return card
+            return ""
+        if "Счет" in card:
+            if len(card) > 4:
+                return "Счет **" + card[-4:]
+            return card
+
+        parts = card.split()
+        card_number = ""
+        for part in parts:
+            clean_part = "".join(filter(str.isdigit, part))
+            if len(clean_part) >= 16:
+                card_number = clean_part
+                break
+
+        if not card_number:
+            return card
+
+        first_six = card_number[:6]
+        last_four = card_number[-4:]
+        masked_number = f"{first_six[:4]} {first_six[4:6]}** **** {last_four}"
+
+        result_parts = []
+        for part in parts:
+            clean_part = "".join(filter(str.isdigit, part))
+            if len(clean_part) < 16:
+                result_parts.append(part)
+
+        result_parts.append(masked_number)
+        return " ".join(result_parts)
 
     from_masked = mask_card(from_account)
     to_masked = mask_card(to_account)
 
-    # Формируем строку перевода
     if from_masked and to_masked:
         transfer_info = f"{from_masked} -> {to_masked}"
     elif to_masked:
