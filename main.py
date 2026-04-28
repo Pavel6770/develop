@@ -12,7 +12,8 @@ from services.transaction_utils import (
     sort_transactions_by_date,
     filter_ruble_transactions,
     filter_by_description,
-    format_transaction_for_display
+    format_transaction_for_display,
+    count_transactions_by_categories
 )
 
 
