@@ -41,13 +41,24 @@ def load_transactions_from_csv(file_path: str) -> List[Dict[str, Any]]:
         return []
 
     transactions = []
-    with open(file_path, 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
+
+    with open(file_path, 'r', encoding='utf-8-sig') as file:
+        # Пробуем определить разделитель
+        first_line = file.readline()
+        delimiter = ';' if ';' in first_line else ','
+        file.seek(0)
+
+        reader = csv.DictReader(file, delimiter=delimiter)
         for row in reader:
-            if 'amount' in row:
+            # Очищаем ключи от пробелов
+            row = {key.strip(): value for key, value in row.items()}
+
+            # Преобразуем amount в число
+            if 'amount' in row and row['amount']:
                 try:
-                    row['amount'] = float(row['amount'])
-                except ValueError:
+                    amount_str = row['amount'].replace(',', '.')
+                    row['amount'] = float(amount_str)
+                except (ValueError, TypeError):
                     pass
             transactions.append(row)
 
@@ -69,9 +80,10 @@ def load_transactions_from_xlsx(file_path: str) -> List[Dict[str, Any]]:
     workbook = openpyxl.load_workbook(file_path, data_only=True)
     sheet = workbook.active
 
+    # Получаем заголовки из первой строки
     headers = []
     for cell in sheet[1]:
-        headers.append(cell.value)
+        headers.append(cell.value if cell.value else "")
 
     transactions = []
     for row in sheet.iter_rows(min_row=2, values_only=True):
