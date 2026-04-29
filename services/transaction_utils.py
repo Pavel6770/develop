@@ -119,12 +119,25 @@ def filter_ruble_transactions(transactions: List[Dict[str, Any]]) -> List[Dict[s
     ruble_keywords = ['руб', 'rub', 'rur', '₽']
 
     def is_ruble(transaction: Dict[str, Any]) -> bool:
-        # Проверяем поле currency
-        currency = transaction.get('currency', {}).get('code', '')
-        if currency:
-            return currency.upper() in ['RUB', 'RUR']
+        # Вариант 1: JSON формат
+        if 'operationAmount' in transaction:
+            currency_info = transaction['operationAmount'].get('currency', {})
+            currency_code = currency_info.get('code', '')
+            if currency_code:
+                return currency_code.upper() in ['RUB', 'RUR']
+            currency_name = currency_info.get('name', '')
+            return any(keyword in currency_name.lower() for keyword in ruble_keywords)
 
-        # Проверяем amount и description
+        # Вариант 2: CSV/Excel формат
+        currency_code = transaction.get('currency_code', '')
+        if currency_code:
+            return currency_code.upper() in ['RUB', 'RUR']
+
+        currency_name = transaction.get('currency_name', '')
+        if currency_name:
+            return any(keyword in currency_name.lower() for keyword in ruble_keywords)
+
+        # Вариант 3: проверяем описание и сумму
         amount_str = str(transaction.get('amount', ''))
         description = transaction.get('description', '')
         combined = f"{amount_str} {description}".lower()
@@ -152,34 +165,55 @@ def filter_by_description(
 
 
 def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
-    """Форматирует транзакцию для вывода в консоль."""
+    """
+    Форматирует транзакцию для вывода в консоль.
+    Поддерживает как JSON формат (с operationAmount), так и CSV/Excel формат.
+    """
     # Форматируем дату
-    date = transaction.get("date", "")
+    date = transaction.get('date', '')
     if date and len(date) > 10:
         date = date[:10]
-    if date and "-" in date:
-        parts = date.split("-")
+    if date and '-' in date:
+        parts = date.split('-')
         if len(parts) == 3:
             date = f"{parts[2]}.{parts[1]}.{parts[0]}"
 
-    description = transaction.get("description", "Операция")
+    description = transaction.get('description', 'Операция')
 
-    # Получаем сумму и валюту
-    operation_amount = transaction.get("operationAmount", {})
-    amount = operation_amount.get("amount", 0)
-    currency_info = operation_amount.get("currency", {})
-    currency = currency_info.get("name", currency_info.get("code", "руб."))
+    # Получаем сумму и валюту (универсальный способ)
+    amount = None
+    currency = None
 
+    # Вариант 1: JSON формат (с operationAmount)
+    if 'operationAmount' in transaction:
+        op_amount = transaction['operationAmount']
+        amount = op_amount.get('amount', 0)
+        currency_info = op_amount.get('currency', {})
+        currency = currency_info.get('name') or currency_info.get('code')
+
+    # Вариант 2: CSV/Excel формат (прямые поля)
+    elif 'amount' in transaction:
+        amount = transaction.get('amount', 0)
+        currency = transaction.get('currency_name') or transaction.get('currency_code')
+
+    # Если ничего не нашли, ставим значения по умолчанию
+    if amount is None:
+        amount = 0
+    if not currency:
+        currency = 'руб.'
+
+    # Преобразуем amount в число, если это строка
     if isinstance(amount, str):
         try:
             amount = float(amount)
         except ValueError:
             pass
 
-    from_account = transaction.get("from", "")
-    to_account = transaction.get("to", "")
+    # Получаем информацию о счетах
+    from_account = transaction.get('from', '')
+    to_account = transaction.get('to', '')
 
-    # Правильная маскировка карт и счетов
+    # Маскировка карт и счетов
     def mask_card(card: str) -> str:
         if not card:
             return ""
@@ -215,6 +249,7 @@ def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
     from_masked = mask_card(from_account)
     to_masked = mask_card(to_account)
 
+    # Формируем строку перевода
     if from_masked and to_masked:
         transfer_info = f"{from_masked} -> {to_masked}"
     elif to_masked:
@@ -222,6 +257,7 @@ def format_transaction_for_display(transaction: Dict[str, Any]) -> str:
     else:
         transfer_info = ""
 
+    # Собираем итоговую строку
     result = f"{date} {description}\n"
     if transfer_info:
         result += f"{transfer_info}\n"
